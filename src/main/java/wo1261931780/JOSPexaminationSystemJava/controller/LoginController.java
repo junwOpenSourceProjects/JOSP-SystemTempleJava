@@ -5,14 +5,18 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import wo1261931780.JOSPexaminationSystemJava.config.ShowResult;
+import wo1261931780.JOSPexaminationSystemJava.entity.AccountRole;
 import wo1261931780.JOSPexaminationSystemJava.entity.LoginUser;
 import wo1261931780.JOSPexaminationSystemJava.service.LoginUserService;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -61,5 +65,21 @@ public class LoginController {
 		//	return ShowResult.sendSuccess(loginUser);
 		//}
 		return ShowResult.sendError("登录失败");
+	}
+	
+	/**
+	 * 获取用户信息，暂时写死
+	 * @return 用户信息
+	 */
+	@GetMapping("/info")
+	public ShowResult<AccountRole> userInfo() {
+		AccountRole accountRole = new AccountRole();
+		List<String> strings = new ArrayList<>();
+		strings.add("admin");
+		accountRole.setRoles(strings);
+		accountRole.setIntroduction("I am a super administrator");
+		accountRole.setAvatar("https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
+		accountRole.setName("Super Admin");
+		return ShowResult.sendSuccess(accountRole);
 	}
 }

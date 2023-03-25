@@ -33,7 +33,7 @@ public class ShowResult<T> {
 	public static <T> ShowResult<T> sendSuccess(T object) {
 		ShowResult<T> tShowResult = new ShowResult<>();
 		tShowResult.setData(object);
-		tShowResult.setCode(1);
+		tShowResult.setCode(20000);
 		return tShowResult;
 	}
 

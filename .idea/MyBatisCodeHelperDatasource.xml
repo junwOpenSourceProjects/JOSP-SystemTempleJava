@@ -43,6 +43,38 @@
         <option name="p3CComment" value="true" />
         <option name="tableGenerateConfigs">
           <map>
+            <entry key="postgraduate:account_role">
+              <value>
+                <TableGenerateConfig>
+                  <option name="batchInsert" value="true" />
+                  <option name="generatedKey" value="" />
+                  <option name="insertOnDuplicateKey" value="true" />
+                  <option name="javaModelName" value="AccountRole" />
+                  <option name="moduleName" value="JOSP-examinationSystemJava" />
+                  <option name="sequenceColumn" value="" />
+                  <option name="sequenceId" value="" />
+                  <option name="updateBatch" value="true" />
+                  <option name="updateBatchSelective" value="true" />
+                  <option name="useActualColumnName" value="false" />
+                </TableGenerateConfig>
+              </value>
+            </entry>
+            <entry key="postgraduate:complex_table">
+              <value>
+                <TableGenerateConfig>
+                  <option name="batchInsert" value="true" />
+                  <option name="generatedKey" value="" />
+                  <option name="insertOnDuplicateKey" value="true" />
+                  <option name="javaModelName" value="ComplexTable" />
+                  <option name="moduleName" value="JOSP-examinationSystemJava" />
+                  <option name="sequenceColumn" value="" />
+                  <option name="sequenceId" value="" />
+                  <option name="updateBatch" value="true" />
+                  <option name="updateBatchSelective" value="true" />
+                  <option name="useActualColumnName" value="false" />
+                </TableGenerateConfig>
+              </value>
+            </entry>
             <entry key="postgraduate:merge_database">
               <value>
                 <TableGenerateConfig>
@@ -62,7 +94,6 @@
         </option>
         <option name="updateBatch" value="true" />
         <option name="updateBatchSelective" value="true" />
-        <option name="useExample" value="true" />
         <option name="useOpenApi" value="true" />
         <option name="useSwagger" value="true" />
         <option name="userMybatisPlus" value="true" />

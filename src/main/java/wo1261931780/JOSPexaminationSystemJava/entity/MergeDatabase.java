@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 *Package:wo1261931780.JOSPexaminationSystemJava.entity
 *@author liujiajun_junw
 *@Date 2023-03-04-38  星期六
-*@description 
+*@description
 */
 /**
     * 红果研，考研盒子合并数据库
@@ -35,7 +35,7 @@ public class MergeDatabase implements Serializable {
     /**
      * 排名
      */
-    @TableId(value = "rank", type = IdType.AUTO)
+    @TableId(value = "`rank`", type = IdType.AUTO)
     @ApiModelProperty(value="排名")
     @Schema(description="排名")
     private Integer rank;
