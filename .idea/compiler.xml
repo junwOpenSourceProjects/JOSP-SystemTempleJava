@@ -7,12 +7,16 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="JOSP-examinationSystemJava" />
+        <module name="JOSP-SystemTempleJava" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="JOSP-examinationSystemJava" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="JOSP-SystemTempleJava" options="-parameters" />
       <module name="JOSP-examinationSystemJava" options="-parameters" />
     </option>
   </component>
