@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wo1261931780.JOSPexaminationSystemJava.dao.ComplexTableMapper">
+  <resultMap id="BaseResultMap" type="wo1261931780.JOSPexaminationSystemJava.entity.ComplexTable">
+    <!--@mbg.generated-->
+    <!--@Table complex_table-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="timestamp" jdbcType="TIMESTAMP" property="timestamp" />
+    <result column="author" jdbcType="VARCHAR" property="author" />
+    <result column="reviewer" jdbcType="VARCHAR" property="reviewer" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="content_short" jdbcType="VARCHAR" property="contentShort" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+    <result column="forecast" jdbcType="VARCHAR" property="forecast" />
+    <result column="importance" jdbcType="VARCHAR" property="importance" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="display_time" jdbcType="TIMESTAMP" property="displayTime" />
+    <result column="comment_disabled" jdbcType="VARCHAR" property="commentDisabled" />
+    <result column="pageviews" jdbcType="VARCHAR" property="pageviews" />
+    <result column="image_uri" jdbcType="LONGVARCHAR" property="imageUri" />
+    <result column="platforms" jdbcType="VARCHAR" property="platforms" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, `timestamp`, author, reviewer, title, content_short, content, forecast, importance, 
+    `type`, `status`, display_time, comment_disabled, pageviews, image_uri, platforms
+  </sql>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update complex_table
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="`timestamp` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=INTEGER} then #{item.timestamp,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+      <trim prefix="author = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=INTEGER} then #{item.author,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="reviewer = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=INTEGER} then #{item.reviewer,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="title = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=INTEGER} then #{item.title,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="content_short = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=INTEGER} then #{item.contentShort,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="content = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=INTEGER} then #{item.content,jdbcType=LONGVARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="forecast = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=INTEGER} then #{item.forecast,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="importance = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=INTEGER} then #{item.importance,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="`type` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=INTEGER} then #{item.type,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="`status` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=INTEGER} then #{item.status,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="display_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=INTEGER} then #{item.displayTime,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+      <trim prefix="comment_disabled = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=INTEGER} then #{item.commentDisabled,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="pageviews = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=INTEGER} then #{item.pageviews,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="image_uri = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=INTEGER} then #{item.imageUri,jdbcType=LONGVARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="platforms = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=INTEGER} then #{item.platforms,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  <update id="updateBatchSelective" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update complex_table
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="`timestamp` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.timestamp != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.timestamp,jdbcType=TIMESTAMP}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="author = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.author != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.author,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="reviewer = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.reviewer != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.reviewer,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="title = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.title != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.title,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="content_short = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.contentShort != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.contentShort,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="content = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.content != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.content,jdbcType=LONGVARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="forecast = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.forecast != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.forecast,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="importance = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.importance != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.importance,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="`type` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.type != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.type,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="`status` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.status != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.status,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="display_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.displayTime != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.displayTime,jdbcType=TIMESTAMP}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="comment_disabled = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.commentDisabled != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.commentDisabled,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="pageviews = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.pageviews != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.pageviews,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="image_uri = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.imageUri != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.imageUri,jdbcType=LONGVARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="platforms = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.platforms != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.platforms,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  <insert id="batchInsert" parameterType="map">
+    <!--@mbg.generated-->
+    insert into complex_table
+    (id, `timestamp`, author, reviewer, title, content_short, content, forecast, importance, 
+      `type`, `status`, display_time, comment_disabled, pageviews, image_uri, platforms
+      )
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.id,jdbcType=INTEGER}, #{item.timestamp,jdbcType=TIMESTAMP}, #{item.author,jdbcType=VARCHAR}, 
+        #{item.reviewer,jdbcType=VARCHAR}, #{item.title,jdbcType=VARCHAR}, #{item.contentShort,jdbcType=VARCHAR}, 
+        #{item.content,jdbcType=LONGVARCHAR}, #{item.forecast,jdbcType=VARCHAR}, #{item.importance,jdbcType=VARCHAR}, 
+        #{item.type,jdbcType=VARCHAR}, #{item.status,jdbcType=VARCHAR}, #{item.displayTime,jdbcType=TIMESTAMP}, 
+        #{item.commentDisabled,jdbcType=VARCHAR}, #{item.pageviews,jdbcType=VARCHAR}, #{item.imageUri,jdbcType=LONGVARCHAR}, 
+        #{item.platforms,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" parameterType="wo1261931780.JOSPexaminationSystemJava.entity.ComplexTable">
+    <!--@mbg.generated-->
+    insert into complex_table
+    (id, `timestamp`, author, reviewer, title, content_short, content, forecast, importance, 
+      `type`, `status`, display_time, comment_disabled, pageviews, image_uri, platforms
+      )
+    values
+    (#{id,jdbcType=INTEGER}, #{timestamp,jdbcType=TIMESTAMP}, #{author,jdbcType=VARCHAR}, 
+      #{reviewer,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{contentShort,jdbcType=VARCHAR}, 
+      #{content,jdbcType=LONGVARCHAR}, #{forecast,jdbcType=VARCHAR}, #{importance,jdbcType=VARCHAR}, 
+      #{type,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{displayTime,jdbcType=TIMESTAMP}, 
+      #{commentDisabled,jdbcType=VARCHAR}, #{pageviews,jdbcType=VARCHAR}, #{imageUri,jdbcType=LONGVARCHAR}, 
+      #{platforms,jdbcType=VARCHAR})
+    on duplicate key update 
+    id = #{id,jdbcType=INTEGER}, 
+    `timestamp` = #{timestamp,jdbcType=TIMESTAMP}, 
+    author = #{author,jdbcType=VARCHAR}, 
+    reviewer = #{reviewer,jdbcType=VARCHAR}, 
+    title = #{title,jdbcType=VARCHAR}, 
+    content_short = #{contentShort,jdbcType=VARCHAR}, 
+    content = #{content,jdbcType=LONGVARCHAR}, 
+    forecast = #{forecast,jdbcType=VARCHAR}, 
+    importance = #{importance,jdbcType=VARCHAR}, 
+    `type` = #{type,jdbcType=VARCHAR}, 
+    `status` = #{status,jdbcType=VARCHAR}, 
+    display_time = #{displayTime,jdbcType=TIMESTAMP}, 
+    comment_disabled = #{commentDisabled,jdbcType=VARCHAR}, 
+    pageviews = #{pageviews,jdbcType=VARCHAR}, 
+    image_uri = #{imageUri,jdbcType=LONGVARCHAR}, 
+    platforms = #{platforms,jdbcType=VARCHAR}
+  </insert>
+  <insert id="insertOrUpdateSelective" parameterType="wo1261931780.JOSPexaminationSystemJava.entity.ComplexTable">
+    <!--@mbg.generated-->
+    insert into complex_table
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="timestamp != null">
+        `timestamp`,
+      </if>
+      <if test="author != null">
+        author,
+      </if>
+      <if test="reviewer != null">
+        reviewer,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="contentShort != null">
+        content_short,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+      <if test="forecast != null">
+        forecast,
+      </if>
+      <if test="importance != null">
+        importance,
+      </if>
+      <if test="type != null">
+        `type`,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="displayTime != null">
+        display_time,
+      </if>
+      <if test="commentDisabled != null">
+        comment_disabled,
+      </if>
+      <if test="pageviews != null">
+        pageviews,
+      </if>
+      <if test="imageUri != null">
+        image_uri,
+      </if>
+      <if test="platforms != null">
+        platforms,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="timestamp != null">
+        #{timestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="author != null">
+        #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="reviewer != null">
+        #{reviewer,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="contentShort != null">
+        #{contentShort,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="forecast != null">
+        #{forecast,jdbcType=VARCHAR},
+      </if>
+      <if test="importance != null">
+        #{importance,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="displayTime != null">
+        #{displayTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="commentDisabled != null">
+        #{commentDisabled,jdbcType=VARCHAR},
+      </if>
+      <if test="pageviews != null">
+        #{pageviews,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUri != null">
+        #{imageUri,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="platforms != null">
+        #{platforms,jdbcType=VARCHAR},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=INTEGER},
+      </if>
+      <if test="timestamp != null">
+        `timestamp` = #{timestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="author != null">
+        author = #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="reviewer != null">
+        reviewer = #{reviewer,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="contentShort != null">
+        content_short = #{contentShort,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="forecast != null">
+        forecast = #{forecast,jdbcType=VARCHAR},
+      </if>
+      <if test="importance != null">
+        importance = #{importance,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        `type` = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="displayTime != null">
+        display_time = #{displayTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="commentDisabled != null">
+        comment_disabled = #{commentDisabled,jdbcType=VARCHAR},
+      </if>
+      <if test="pageviews != null">
+        pageviews = #{pageviews,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUri != null">
+        image_uri = #{imageUri,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="platforms != null">
+        platforms = #{platforms,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>
