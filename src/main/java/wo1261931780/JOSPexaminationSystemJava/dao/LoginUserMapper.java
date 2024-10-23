@@ -23,7 +23,7 @@ public interface LoginUserMapper extends BaseMapper<LoginUser> {
 
     int batchInsert(@Param("list") List<LoginUser> list);
 
-    int insertOrUpdate(LoginUser record);
+    boolean insertOrUpdate(LoginUser record);
 
     int insertOrUpdateSelective(LoginUser record);
 }

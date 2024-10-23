@@ -31,7 +31,7 @@ public class LoginUserService extends ServiceImpl<LoginUserMapper, LoginUser> {
         return baseMapper.batchInsert(list);
     }
     
-    public int insertOrUpdate(LoginUser record) {
+    public boolean insertOrUpdate(LoginUser record) {
         return baseMapper.insertOrUpdate(record);
     }
     
