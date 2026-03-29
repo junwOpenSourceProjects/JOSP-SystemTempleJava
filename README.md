@@ -1,4 +1,4 @@
-# JOSP-SystemTempleJava - 系统模板项目
+# JOSP-SystemTempleJava - vue-element-admin系统后端
 
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.0.5-brightgreen.svg)
 ![Java](https://img.shields.io/badge/Java-17-blue.svg)
@@ -6,11 +6,11 @@
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-orange.svg)
 ![License](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)
 
-> 用于快速构建后台系统的Spring Boot模板项目
+> vue-element-admin模板系统后端API服务
 
 ## 📖 项目简介
 
-JOSP-SystemTempleJava 是一个用于快速构建后台管理系统的 Spring Boot 模板项目,提供了完整的项目结构、常用功能模块和最佳实践,支持多数据源配置,可快速启动新的后台系统开发。
+JOSP-SystemTempleJava 是一个基于vue-element-admin模板的后台管理系统后端,提供用户登录认证、用户信息管理等核心API服务,支持多数据源配置。
 
 **前端项目**: 
 - Vue2版本: [JOSP-SystemTempleVue2](../JOSP-SystemTempleVue2)
@@ -245,7 +245,69 @@ FastAutoGenerator.create("jdbc:mysql://localhost:3306/db", "root", "password")
     .execute();
 ```
 
-## 📊 系统功能模块
+## 📊 数据库表结构
+
+### 用户表 (login_user)
+
+| 字段名 | 类型 | 说明 |
+|--------|------|------|
+| id | BIGINT | 用户ID |
+| username | VARCHAR | 用户名 |
+| password | VARCHAR | 密码 (MD5加密) |
+
+### 账号角色表 (account_role)
+
+| 字段名 | 类型 | 说明 |
+|--------|------|------|
+| id | VARCHAR | 主键 |
+| name | VARCHAR | 用户名称 |
+| roles | LIST | 角色列表 |
+| avatar | VARCHAR | 头像URL |
+| introduction | VARCHAR | 用户说明 |
+
+## 💡 核心功能模块
+
+### 1. 用户登录认证
+
+```java
+@PostMapping("/vue-element-admin/user/login")
+public ShowResult<LoginUser> userLogin(@RequestBody LoginUser loginUser) {
+    // MD5密码加密
+    String passwordMd5 = DigestUtils.md5DigestAsHex(loginUser.getPassword().getBytes());
+    // Lambda查询验证
+    LambdaQueryWrapper<LoginUser> wrapper = new LambdaQueryWrapper<>();
+    wrapper.eq(LoginUser::getUsername, loginUser.getUsername())
+           .eq(LoginUser::getPassword, passwordMd5);
+    LoginUser user = loginUserService.getOne(wrapper);
+    return ShowResult.sendSuccess(user);
+}
+```
+
+**功能特性:**
+- 用户名密码验证
+- MD5密码加密
+- 返回用户信息
+- 错误提示处理
+
+### 2. 用户信息获取
+
+```java
+@GetMapping("/vue-element-admin/user/info")
+public ShowResult<AccountRole> userInfo() {
+    AccountRole accountRole = new AccountRole();
+    accountRole.setRoles(Arrays.asList("admin"));
+    accountRole.setIntroduction("I am a super administrator");
+    accountRole.setAvatar("https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
+    accountRole.setName("Super Admin");
+    return ShowResult.sendSuccess(accountRole);
+}
+```
+
+**功能特性:**
+- 返回用户角色信息
+- 返回用户头像
+- 返回用户说明
+- 暂时写死返回数据
 
 ### 基础模块
 - ✅ 用户管理
