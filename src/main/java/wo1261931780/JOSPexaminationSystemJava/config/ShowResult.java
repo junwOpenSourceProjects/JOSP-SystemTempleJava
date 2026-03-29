@@ -1,7 +1,6 @@
 package wo1261931780.JOSPexaminationSystemJava.config;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,17 +9,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Data
-@ApiModel("返回结果")
+@Schema(description = "返回结果")
 @AllArgsConstructor
 @NoArgsConstructor
 public class ShowResult<T> {
-	@ApiModelProperty("返回类型")
+	@Schema(description = "返回类型", example = "20000")
 	private Integer code;
 	// 这里前端和后端拿到的变量必须一致，否则直接res.code会无法跳转
 
-	@ApiModelProperty("返回信息")
+	@Schema(description = "返回信息")
 	private String msg;
-	@ApiModelProperty("返回数据")
+	@Schema(description = "返回数据")
 	private T data;
 
 	/**
