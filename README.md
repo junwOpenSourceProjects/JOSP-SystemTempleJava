@@ -1,4 +1,4 @@
-# JOSP-SystemTempleJava - vue-element-admin系统后端
+# JOSP-SystemTempleJava
 
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.0.5-brightgreen.svg)
 ![Java](https://img.shields.io/badge/Java-17-blue.svg)
@@ -6,15 +6,71 @@
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-orange.svg)
 ![License](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)
 
-> vue-element-admin模板系统后端API服务
+> **Spring Boot 3 后端项目模板** - 一键创建新项目,统一框架结构
+
+## 🚀 从模板创建新项目
+
+### 方式1: GitHub网页操作
+
+1. 点击本页面上方的 **"Use this template"** 按钮
+2. 选择 **"Create a new repository"**
+3. 填写新项目名称(例如: `JOSP-NewProjectJava`)
+4. 点击 **"Create repository"**
+5. 克隆新项目到本地:
+   ```bash
+   git clone https://github.com/你的用户名/JOSP-NewProjectJava.git
+   cd JOSP-NewProjectJava
+   ```
+
+### 方式2: GitHub CLI
+
+```bash
+# 创建新仓库
+gh repo create JOSP-NewProjectJava --template junwOpenSourceProjects/JOSP-SystemTempleJava --public
+
+# 克隆到本地
+gh repo clone 你的用户名/JOSP-NewProjectJava
+cd JOSP-NewProjectJava
+```
+
+## 📝 创建后修改项目信息
+
+### 1. 修改pom.xml
+
+```xml
+<artifactId>JOSP-NewProjectJava</artifactId>
+<name>JOSP-NewProjectJava</name>
+<description>新项目描述</description>
+```
+
+### 2. 修改包名
+
+全局搜索替换:
+- `wo1261931780.JOSPexaminationSystemJava` → `你的包名.新项目名`
+- `JOSPexaminationSystemJava` → `新项目名`
+
+### 3. 修改数据库配置
+
+编辑 `src/main/resources/application.yml`:
+```yaml
+spring:
+  datasource:
+    dynamic:
+      primary: master
+      datasource:
+        master:
+          url: jdbc:mysql://localhost:3306/你的数据库名
+          username: 你的用户名
+          password: 你的密码
+```
 
 ## 📖 项目简介
 
-JOSP-SystemTempleJava 是一个基于vue-element-admin模板的后台管理系统后端,提供用户登录认证、用户信息管理等核心API服务,支持多数据源配置。
+JOSP-SystemTempleJava 是一个Spring Boot 3后端项目模板,提供统一的项目框架结构、API封装规范、数据库配置等基础功能,帮助你快速启动新项目开发。
 
-**前端项目**: 
-- Vue2版本: [JOSP-SystemTempleVue2](../JOSP-SystemTempleVue2)
-- Vue3版本: [JOSP-SystemTempleVue3](../JOSP-SystemTempleVue3)
+**配套前端模板**: 
+- Vue2版本: [JOSP-SystemTempleVue2](https://github.com/junwOpenSourceProjects/JOSP-SystemTempleVue2)
+- Vue3版本: [JOSP-SystemTempleVue3](https://github.com/junwOpenSourceProjects/JOSP-SystemTempleVue3)
 
 ## 🏗️ 系统架构
 
@@ -105,12 +161,34 @@ graph TB
 - Maven 3.6+
 - MySQL 8.0+
 
-### 安装步骤
+### 运行模板项目
 
-1. **克隆项目**
 ```bash
-git clone https://github.com/your-username/JOSP-SystemTempleJava.git
+# 1. 克隆模板项目(用于测试)
+git clone https://github.com/junwOpenSourceProjects/JOSP-SystemTempleJava.git
 cd JOSP-SystemTempleJava
+
+# 2. 创建数据库
+mysql -u root -p -e "CREATE DATABASE system_template CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+# 3. 修改数据库配置
+# 编辑 src/main/resources/application.yml,修改数据库连接信息
+
+# 4. 运行项目
+./mvnw spring-boot:run
+
+# 5. 访问服务
+# 后端地址: http://localhost:8088
+# API文档: http://localhost:8088/doc.html
+# 健康检查: http://localhost:8088/actuator/health
+```
+
+### 从模板创建新项目后的安装步骤
+
+1. **克隆新项目**
+```bash
+git clone https://github.com/你的用户名/JOSP-NewProjectJava.git
+cd JOSP-NewProjectJava
 ```
 
 2. **配置数据库**
