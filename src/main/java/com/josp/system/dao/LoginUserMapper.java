@@ -1,9 +1,9 @@
-package wo1261931780.JOSPexaminationSystemJava.dao;
+package com.josp.system.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import wo1261931780.JOSPexaminationSystemJava.entity.LoginUser;
+import com.josp.system.entity.LoginUser;
 
 import java.util.List;
 

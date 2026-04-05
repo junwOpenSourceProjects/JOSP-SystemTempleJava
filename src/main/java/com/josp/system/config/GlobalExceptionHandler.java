@@ -1,4 +1,4 @@
-package wo1261931780.JOSPexaminationSystemJava.config;
+package com.josp.system.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;

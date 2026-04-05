@@ -1,4 +1,4 @@
-package wo1261931780.JOSPexaminationSystemJava.entity;
+package com.josp.system.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

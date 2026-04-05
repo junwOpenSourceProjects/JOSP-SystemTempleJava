@@ -1,4 +1,4 @@
-package wo1261931780.JOSPexaminationSystemJava.config;
+package com.josp.system.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

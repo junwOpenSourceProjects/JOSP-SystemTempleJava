@@ -1,4 +1,4 @@
-package wo1261931780.JOSPexaminationSystemJava.config;
+package com.josp.system.config;
 
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
