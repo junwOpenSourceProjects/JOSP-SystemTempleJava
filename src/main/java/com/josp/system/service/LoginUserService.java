@@ -1,5 +1,6 @@
 package com.josp.system.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import com.josp.system.dao.LoginUserMapper;
@@ -17,6 +18,10 @@ import java.util.List;
 */
 @Service
 public class LoginUserService extends ServiceImpl<LoginUserMapper, LoginUser> {
+
+    public LoginUser getByUsername(String username) {
+        return getOne(new LambdaQueryWrapper<LoginUser>().eq(LoginUser::getUsername, username));
+    }
 
     
     public int updateBatch(List<LoginUser> list) {

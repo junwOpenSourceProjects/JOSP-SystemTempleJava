@@ -108,6 +108,14 @@ public class LoginUser implements UserDetails {
 	@TableField(value = "update_user", fill = FieldFill.INSERT_UPDATE)
 	@Schema(description = "修改人")
 	private Long updateUser;
+
+	@TableField(exist = false)
+	@Schema(description = "验证码缓存key")
+	private String captchaKey;
+
+	@TableField(exist = false)
+	@Schema(description = "验证码")
+	private String captchaCode;
 	
 	@Serial
 	private static final long serialVersionUID = 1L;
