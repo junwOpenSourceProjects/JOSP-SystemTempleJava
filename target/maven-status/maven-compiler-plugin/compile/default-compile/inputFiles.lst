@@ -10,12 +10,17 @@ C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\j
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\common\exception\GlobalExceptionHandler.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\config\MybatisPlusConfig.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\config\MyMetaObjectHandler.java
+C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\config\RedisConfig.java
+C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\config\SnowflakeIdGenerator.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\controller\DashboardController.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\controller\DemoController.java
+C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\controller\DictController.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\controller\LoginController.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\controller\MenuController.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\dao\CategorySalesMapper.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\dao\DailyStatsMapper.java
+C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\dao\DictDataMapper.java
+C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\dao\DictTypeMapper.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\dao\LoginUserMapper.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\dao\MenuMapper.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\dao\MonthlySalesMapper.java
@@ -24,6 +29,8 @@ C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\j
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\entity\AccountRole.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\entity\CategorySales.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\entity\DailyStats.java
+C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\entity\DictData.java
+C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\entity\DictType.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\entity\LoginUser.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\entity\Menu.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\entity\MonthlySales.java
@@ -34,6 +41,8 @@ C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\j
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\security\config\SecurityConfig.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\security\jwt\JwtAuthenticationFilter.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\security\jwt\JwtTokenUtil.java
+C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\service\DictService.java
+C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\service\impl\DictServiceImpl.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\service\impl\MenuServiceImpl.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\service\LoginUserService.java
 C:\Users\64234\Documents\GitHub\system\JOSP-SystemTempleJava\src\main\java\com\josp\system\service\MenuService.java

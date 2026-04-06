@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @TableName("weekly_visits")
 public class WeeklyVisits {
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
     private String weekDay;
     private Integer visits;

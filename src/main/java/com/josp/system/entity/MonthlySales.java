@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @TableName("monthly_sales")
 public class MonthlySales {
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
     private String monthName;
     private Integer sales;

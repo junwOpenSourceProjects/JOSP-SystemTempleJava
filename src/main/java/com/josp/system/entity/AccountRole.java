@@ -35,7 +35,7 @@ public class AccountRole implements Serializable {
 	/**
 	 * 主键
 	 */
-	@TableId(value = "id", type = IdType.AUTO)
+	@TableId(value = "id", type = IdType.ASSIGN_ID)
 	@Schema(description = "主键")
 	private String id;
 	

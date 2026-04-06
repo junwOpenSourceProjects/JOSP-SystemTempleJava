@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @TableName("daily_stats")
 public class DailyStats {
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
     private LocalDate statDate;
     private Integer totalUsers;

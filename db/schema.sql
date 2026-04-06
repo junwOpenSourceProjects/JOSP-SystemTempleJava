@@ -93,3 +93,27 @@ INSERT INTO `sys_menu` (`id`, `parent_id`, `name`, `type`, `path`, `component`, 
 (8, 0, '示例组件', 1, '/demo', 'Layout', 'guide', 3, 1),
 (9, 8, '高级表单', 2, 'form', 'demo/form/index', 'form', 1, 1),
 (10, 8, '综合表格', 2, 'table', 'demo/table/index', 'table', 2, 1);
+
+-- ----------------------------
+-- Table structure for demo
+-- ----------------------------
+DROP TABLE IF EXISTS `demo`;
+CREATE TABLE `demo` (
+  `id` bigint(20) NOT NULL COMMENT '主键-雪花ID',
+  `title` varchar(255) NOT NULL DEFAULT '' COMMENT '标题',
+  `author` varchar(100) DEFAULT '' COMMENT '作者',
+  `pageviews` int(11) DEFAULT '0' COMMENT '阅读量',
+  `status` varchar(20) DEFAULT 'draft' COMMENT '状态',
+  `timestamp` date DEFAULT NULL COMMENT '创建日期',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='示例表格';
+
+-- ----------------------------
+-- Records of demo
+-- ----------------------------
+INSERT INTO `demo` (`id`, `title`, `author`, `pageviews`, `status`, `timestamp`) VALUES
+(1875456789012345678, '示例文章标题 1', '张三', 2500, 'published', '2026-03-01'),
+(1875456789012345679, '示例文章标题 2', '李四', 1800, 'draft', '2026-03-02'),
+(1875456789012345680, '示例文章标题 3', '王五', 3200, 'deleted', '2026-03-03'),
+(1875456789012345681, '示例文章标题 4', '赵六', 4100, 'published', '2026-03-04'),
+(1875456789012345682, '示例文章标题 5', '钱七', 2900, 'draft', '2026-03-05');

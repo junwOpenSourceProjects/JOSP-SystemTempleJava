@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @TableName("sys_menu")
 public class Menu implements Serializable {
 
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     private Long parentId;

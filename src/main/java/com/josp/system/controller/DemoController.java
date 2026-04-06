@@ -1,46 +1,31 @@
 package com.josp.system.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.josp.system.common.api.PageResult;
 import com.josp.system.common.api.Result;
+import com.josp.system.dao.DemoMapper;
+import com.josp.system.entity.Demo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * 示例表格接口
+ */
 @Tag(name = "示例接口")
 @RestController
 @RequestMapping("/api/v1/demo")
 @RequiredArgsConstructor
 public class DemoController {
 
-    // 模拟数据库存储
-    private static final Map<Long, Map<String, Object>> DATA_STORE = new ConcurrentHashMap<>();
-    private static final AtomicLong ID_GENERATOR = new AtomicLong(55);
-
-    static {
-        initData();
-    }
-
-    private static void initData() {
-        String[] statuses = {"published", "draft", "deleted"};
-        String[] authors = {"张三", "李四", "王五", "赵六", "钱七"};
-
-        for (int i = 1; i <= 55; i++) {
-            Map<String, Object> item = new HashMap<>();
-            item.put("id", (long) i);
-            item.put("title", "示例文章标题 " + i);
-            item.put("author", authors[i % authors.length]);
-            item.put("pageviews", (int) (Math.random() * 9000) + 1000);
-            item.put("status", statuses[i % statuses.length]);
-            item.put("timestamp", "2026-0" + ((i % 9) + 1) + "-" + String.format("%02d", (i % 28) + 1));
-            DATA_STORE.put((long) i, item);
-        }
-    }
+    private final DemoMapper demoMapper;
 
     @Operation(summary = "获取表格列表")
     @GetMapping("/table/list")
@@ -50,77 +35,88 @@ public class DemoController {
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String status
     ) {
-        List<Map<String, Object>> allData = new ArrayList<>(DATA_STORE.values());
+        Page<Demo> pageParam = new Page<>(page, limit);
 
-        // 过滤
+        LambdaQueryWrapper<Demo> wrapper = new LambdaQueryWrapper<>();
         if (title != null && !title.isEmpty()) {
-            allData = allData.stream()
-                    .filter(item -> item.get("title").toString().contains(title))
-                    .collect(Collectors.toList());
+            wrapper.like(Demo::getTitle, title);
         }
         if (status != null && !status.isEmpty()) {
-            allData = allData.stream()
-                    .filter(item -> item.get("status").equals(status))
-                    .collect(Collectors.toList());
+            wrapper.eq(Demo::getStatus, status);
         }
+        wrapper.orderByDesc(Demo::getId);
 
-        // 排序
-        allData.sort((a, b) -> Long.compare((Long) b.get("id"), (Long) a.get("id")));
+        IPage<Demo> result = demoMapper.selectPage(pageParam, wrapper);
 
-        // 分页
-        int total = allData.size();
-        int start = (page - 1) * limit;
-        int end = Math.min(start + limit, total);
-        List<Map<String, Object>> pageData = start < total
-                ? allData.subList(start, end)
-                : new ArrayList<>();
-
-        return Result.success(new PageResult<>(pageData, total));
+        PageResult<Map<String, Object>> pageResult = new PageResult<>(
+                result.getRecords().stream().map(this::toMap).toList(),
+                result.getTotal()
+        );
+        return Result.success(pageResult);
     }
 
     @Operation(summary = "获取表格表单数据")
     @GetMapping("/table/{id}")
     public Result<Map<String, Object>> getTableItem(@PathVariable Long id) {
-        Map<String, Object> item = DATA_STORE.get(id);
-        if (item == null) {
+        Demo demo = demoMapper.selectById(id);
+        if (demo == null) {
             return Result.failed("记录不存在");
         }
-        return Result.success(new HashMap<>(item));
+        return Result.success(toMap(demo));
     }
 
     @Operation(summary = "新增表格记录")
     @PostMapping("/table")
-    public Result<Map<String, Object>> createTableItem(@RequestBody Map<String, Object> data) {
-        long id = ID_GENERATOR.incrementAndGet();
-        data.put("id", id);
-        data.put("timestamp", "2026-04-07");
-        data.put("pageviews", 0);
-        DATA_STORE.put(id, data);
-        return Result.success(new HashMap<>(data));
+    public Result<Map<String, Object>> createTableItem(@RequestBody Demo demo) {
+        // 设置创建时间
+        if (demo.getTimestamp() == null) {
+            demo.setTimestamp(LocalDate.now());
+        }
+        // pageviews 默认 0
+        if (demo.getPageviews() == null) {
+            demo.setPageviews(0);
+        }
+
+        demoMapper.insert(demo);
+        return Result.success(toMap(demo));
     }
 
     @Operation(summary = "更新表格记录")
     @PutMapping("/table/{id}")
-    public Result<Map<String, Object>> updateTableItem(@PathVariable Long id, @RequestBody Map<String, Object> data) {
-        Map<String, Object> existing = DATA_STORE.get(id);
+    public Result<Map<String, Object>> updateTableItem(@PathVariable Long id, @RequestBody Demo demo) {
+        Demo existing = demoMapper.selectById(id);
         if (existing == null) {
             return Result.failed("记录不存在");
         }
+
         // 保留原有 timestamp 和 pageviews，只更新可编辑字段
-        data.put("id", id);
-        data.put("timestamp", existing.get("timestamp"));
-        data.put("pageviews", existing.get("pageviews"));
-        DATA_STORE.put(id, data);
-        return Result.success(new HashMap<>(data));
+        demo.setId(id);
+        demo.setTimestamp(existing.getTimestamp());
+        demo.setPageviews(existing.getPageviews());
+
+        demoMapper.updateById(demo);
+        return Result.success(toMap(demo));
     }
 
     @Operation(summary = "删除表格记录")
     @DeleteMapping("/table/{id}")
     public Result<Void> deleteTableItem(@PathVariable Long id) {
-        if (!DATA_STORE.containsKey(id)) {
+        if (demoMapper.selectById(id) == null) {
             return Result.failed("记录不存在");
         }
-        DATA_STORE.remove(id);
+        demoMapper.deleteById(id);
         return Result.success(null);
+    }
+
+    private Map<String, Object> toMap(Demo demo) {
+        Map<String, Object> map = new HashMap<>();
+        // Long 类型 id 转为字符串，避免 JavaScript 精度丢失
+        map.put("id", String.valueOf(demo.getId()));
+        map.put("title", demo.getTitle());
+        map.put("author", demo.getAuthor());
+        map.put("pageviews", demo.getPageviews());
+        map.put("status", demo.getStatus());
+        map.put("timestamp", demo.getTimestamp() != null ? demo.getTimestamp().toString() : null);
+        return map;
     }
 }

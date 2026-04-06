@@ -26,7 +26,7 @@ public class LoginUser implements UserDetails {
 	/**
 	 * 主键
 	 */
-	@TableId(value = "id", type = IdType.AUTO)
+	@TableId(value = "id", type = IdType.ASSIGN_ID)
 	@Schema(description = "主键")
 	private Long id;
 	
