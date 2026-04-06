@@ -1,12 +1,12 @@
 # JOSP-SystemTempleJava
 
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.5-brightgreen.svg)
-![Java](https://img.shields.io/badge/Java-21-blue.svg)
-![MyBatis-Plus](https://img.shields.io/badge/MyBatis--Plus-3.5.16-blue.svg)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.4-brightgreen.svg)
+![Java](https://img.shields.io/badge/Java-17-blue.svg)
+![MyBatis-Plus](https://img.shields.io/badge/MyBatis--Plus-3.5.10-blue.svg)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-orange.svg)
 ![License](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)
 
-> **Spring Boot 4 后端项目模板** - 现代化、高性能的 Java 后端一键式开发底座。
+> **Spring Boot 后端项目模板** - 现代化、高性能的 Java 后端一键式开发底座。
 
 ## 🚀 从模板创建新项目
 
@@ -55,7 +55,7 @@ spring:
 
 ## 📖 项目简介
 
-JOSP-SystemTempleJava 是一个基于 Spring Boot 4 和 Java 21 的后端项目模板，提供统一的项目框架结构、API 封装规范、Spring Security + JWT 认证以及 MyBatis-Plus 集成。
+JOSP-SystemTempleJava 是一个基于 Spring Boot 3.4 和 Java 17 的后端项目模板，提供统一的项目框架结构、API 封装规范、Spring Security + JWT 认证以及 MyBatis-Plus 集成。
 
 **配套前端模板**: 
 - Vue3版本: [JOSP-SystemTempleVue3](https://github.com/junwOpenSourceProjects/JOSP-SystemTempleVue3)
@@ -73,7 +73,7 @@ graph TB
         JWT[JSON Web Token]
     end
     
-    subgraph Backend[后端服务 Spring Boot 4.0.5]
+    subgraph Backend[后端服务 Spring Boot 3.4]
         Controller[Controller层<br/>接口控制]
         Service[Service层<br/>业务处理]
         Mapper[Mapper层<br/>数据访问]
@@ -111,19 +111,19 @@ graph TB
 
 | 技术 | 版本 | 说明 |
 |------|------|------|
-| **Spring Boot** | 4.0.5 | 核心框架 |
-| **Java** | 21 | 开发语言 |
-| **MyBatis-Plus** | 3.5.16 | ORM框架 |
+| **Spring Boot** | 3.4.4 | 核心框架 |
+| **Java** | 17 | 开发语言 |
+| **MyBatis-Plus** | 3.5.10.1 | ORM框架 |
 | **MySQL** | 8.0 | 数据库 |
 | **Spring Security** | 6.x | 安全框架 |
 | **JJWT** | 0.12.6 | JWT处理库 |
 | **Knife4j** | 4.5.0 | API文档 (Swagger3) |
-| **Hutool** | 5.8.44 | 工具库 |
+| **Hutool** | 5.8.28 | 工具库 |
 
 ## 🚀 快速开始
 
 ### 环境要求
-- JDK 21+
+- JDK 17+
 - Maven 3.9+
 - MySQL 8.0+
 
