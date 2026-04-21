@@ -398,6 +398,122 @@ public class UserController {
         return Result.success(options);
     }
 
+    @Operation(summary = "获取当前用户信息")
+    @GetMapping("/me")
+    public Result<Map<String, Object>> getCurrentUser() {
+        String username = org.springframework.security.core.context.SecurityContextHolder.getContext()
+                .getAuthentication().getName();
+        LoginUser user = loginUserService.getByUsername(username);
+        if (user == null) {
+            return Result.failed("用户不存在");
+        }
+        return Result.success(toMap(user));
+    }
+
+    @Operation(summary = "获取用户分页列表")
+    @GetMapping("/page")
+    public Result<PageResult<Map<String, Object>>> getUserPage(
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "10") Integer limit,
+            @Parameter(description = "搜索关键词") @RequestParam(required = false) String keyword,
+            @Parameter(description = "状态") @RequestParam(required = false) Integer status
+    ) {
+        Page<LoginUser> pageParam = new Page<>(page, limit);
+
+        LambdaQueryWrapper<LoginUser> wrapper = new LambdaQueryWrapper<>();
+        if (keyword != null && !keyword.isEmpty()) {
+            wrapper.and(w -> w.like(LoginUser::getUsername, keyword)
+                    .or()
+                    .like(LoginUser::getName, keyword)
+                    .or()
+                    .like(LoginUser::getPhone, keyword));
+        }
+        if (status != null) {
+            wrapper.eq(LoginUser::getStatus, status);
+        }
+        wrapper.orderByDesc(LoginUser::getCreateTime);
+
+        IPage<LoginUser> result = loginUserService.getPage(pageParam, wrapper);
+
+        List<Map<String, Object>> records = result.getRecords().stream()
+                .map(this::toMap)
+                .collect(Collectors.toList());
+
+        PageResult<Map<String, Object>> pageResult = new PageResult<>(records, result.getTotal());
+        return Result.success(pageResult);
+    }
+
+    @Operation(summary = "获取用户表单数据")
+    @GetMapping("/{id}/form")
+    public Result<Map<String, Object>> getUserFormData(@PathVariable Long id) {
+        LoginUser user = loginUserService.getById(id);
+        if (user == null) {
+            return Result.failed("用户不存在");
+        }
+        return Result.success(toMap(user));
+    }
+
+    @Operation(summary = "修改用户密码")
+    @PatchMapping("/{id}/password")
+    public Result<Void> updateUserPassword(@PathVariable Long id, @RequestParam String password) {
+        LoginUser user = loginUserService.getById(id);
+        if (user == null) {
+            return Result.failed("用户不存在");
+        }
+        user.setPassword(passwordEncoder.encode(password));
+        loginUserService.updateById(user);
+        return Result.success(null, "密码修改成功");
+    }
+
+    @Operation(summary = "下载用户导入模板")
+    @GetMapping("/template")
+    public void downloadTemplate(HttpServletResponse response) throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("用户导入模板");
+
+        CellStyle headerStyle = workbook.createCellStyle();
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerStyle.setFont(headerFont);
+        headerStyle.setAlignment(HorizontalAlignment.CENTER);
+
+        Row headerRow = sheet.createRow(0);
+        String[] headers = {"用户名", "姓名", "手机号", "性别", "身份证号"};
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
+        }
+
+        for (int i = 0; i < headers.length; i++) {
+            sheet.setColumnWidth(i, 20 * 256);
+        }
+
+        String fileName = URLEncoder.encode("用户导入模板", StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setCharacterEncoding("utf-8");
+        response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ".xlsx");
+
+        OutputStream outputStream = response.getOutputStream();
+        workbook.write(outputStream);
+        outputStream.flush();
+        outputStream.close();
+        workbook.close();
+    }
+
+    @Operation(summary = "批量删除用户")
+    @DeleteMapping("/{ids}")
+    public Result<Void> deleteUsersByIds(@PathVariable String ids) {
+        if (ids == null || ids.isEmpty()) {
+            return Result.failed("请选择要删除的用户");
+        }
+        String[] idArray = ids.split(",");
+        for (String idStr : idArray) {
+            loginUserService.removeById(Long.parseLong(idStr.trim()));
+        }
+        return Result.success(null, "批量删除成功");
+    }
+
     private Map<String, Object> toMap(LoginUser user) {
         Map<String, Object> map = new HashMap<>();
         map.put("id", String.valueOf(user.getId()));
