@@ -1,13 +1,13 @@
-# JOSP-System 后端服务
+# JOSP-SystemTempleJava
 
-企业级后台管理系统后端服务，基于 Spring Boot，提供用户管理、角色权限管理、部门管理、字典管理、日志管理等核心功能。
+企业级后台管理系统后端服务，基于 Spring Boot 3.4 + MyBatis-Plus，提供用户管理、角色权限管理、部门管理、字典管理、日志管理等核心功能。
 
 ## 技术栈
 
 | 分类 | 技术 | 版本 |
 |------|------|------|
 | 核心框架 | Spring Boot | 3.4.4 |
-| Java 版本 | OpenJDK | 17 |
+| Java 版本 | OpenJDK | **25** |
 | ORM | MyBatis-Plus | 3.5.10.1 |
 | 数据库 | MySQL | 8.0+ |
 | 缓存 | Redis | 6.0+ |
@@ -15,7 +15,8 @@
 | API 文档 | Knife4j | 4.5.0 |
 | 工具库 | Hutool | 5.8.28 |
 | JSON | FastJSON2 | 2.0.52 |
-| 代码生成 | Lombok | 1.18.30+ |
+| Excel | Apache POI | 5.4.0 |
+| 代码生成 | Lombok | 1.18.38 |
 
 ## 项目结构
 
@@ -30,7 +31,7 @@ src/main/java/com/josp/system/
 │   ├── DictController.java      # 字典管理
 │   ├── LoginLogController.java  # 登录日志
 │   ├── OperLogController.java   # 操作日志
-│   ├── NoticeController.java   # 通知公告
+│   ├── NoticeController.java    # 通知公告
 │   ├── OnlineUserController.java# 在线用户
 │   └── MonitorController.java   # 系统监控
 ├── service/             # 业务逻辑层
@@ -38,20 +39,24 @@ src/main/java/com/josp/system/
 ├── dao/                 # 数据访问层（Mapper）
 ├── entity/              # 数据库实体
 ├── dto/                 # 数据传输对象
-├── common/
-│   ├── annotation/      # 自定义注解（如 @OperLog）
-│   ├── aspect/          # AOP 切面
-│   ├── api/             # API 统一返回格式和 VO
-│   └── utils/           # 工具类（IP、导出等）
-└── security/
-    ├── config/          # 安全配置
-    ├── filter/          # JWT 过滤器
-    └── service/          # 安全相关服务
+├── config/              # Spring 配置类
+├── security/
+│   ├── config/          # 安全配置（Spring Security）
+│   ├── filter/          # JWT 过滤器
+│   └── jwt/             # JWT 工具类
+└── common/
+    ├── annotation/      # 自定义注解（如 @OperLog）
+    ├── aspect/          # AOP 切面
+    ├── api/             # API 统一返回格式
+    ├── constant/        # 常量定义
+    ├── exception/       # 自定义异常
+    └── utils/           # 工具类（IP、导出等）
 ```
 
 ## 功能模块
 
 ### 核心管理模块
+
 | 模块 | 路径 | 说明 |
 |------|------|------|
 | 认证 | `/api/v1/auth/*` | 登录、登出、获取当前用户、验证码 |
@@ -61,6 +66,7 @@ src/main/java/com/josp/system/
 | 部门 | `/api/v1/dept/*` | 树形、选项、CRUD |
 
 ### 系统运维模块
+
 | 模块 | 路径 | 说明 |
 |------|------|------|
 | 登录日志 | `/api/v1/login-logs/*` | 分页、详情、删除、导出、IP归属地 |
@@ -72,7 +78,8 @@ src/main/java/com/josp/system/
 ## 快速开始
 
 ### 环境要求
-- JDK 17+
+
+- JDK 25
 - Maven 3.8+
 - MySQL 8.0+
 - Redis 6.0+
@@ -132,7 +139,7 @@ java -jar target/josp-system-1.0.0-SNAPSHOT.jar
 
 | 表名 | 说明 |
 |------|------|
-| `sys_login_user` | 用户表（Snowflake ID） |
+| `login_user` | 用户表（Snowflake ID） |
 | `sys_role` | 角色表 |
 | `sys_menu` | 菜单权限表 |
 | `sys_dept` | 部门表 |
@@ -240,6 +247,12 @@ flowchart LR
 | 403 | 无权限 |
 | 404 | 资源不存在 |
 | 500 | 服务器内部错误 |
+
+## 相关资源
+
+- [SPEC.md](SPEC.md) - 技术规格说明书
+- [db/database_design.md](db/database_design.md) - 数据库设计文档
+- [db/schema.sql](db/schema.sql) - 数据库建表脚本
 
 ## 贡献指南
 
