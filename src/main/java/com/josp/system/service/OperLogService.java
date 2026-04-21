@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.josp.system.common.api.PageResult;
 import com.josp.system.entity.OperLog;
 
+import java.util.List;
+
 /**
  * 操作日志服务接口
  */
@@ -27,10 +29,15 @@ public interface OperLogService extends IService<OperLog> {
     /**
      * 批量删除操作日志
      */
-    boolean deleteOperLogs(java.util.List<Long> ids);
+    boolean deleteOperLogs(List<Long> ids);
 
     /**
      * 清理操作日志
      */
     int cleanOperLogs(int days);
+
+    /**
+     * 列表查询操作日志（用于导出）
+     */
+    List<OperLog> listOperLogs(String title, String operName, String status);
 }

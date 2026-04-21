@@ -1,0 +1,175 @@
+-------------------------------------------------------------------------------
+Test set: com.josp.system.service.DeptServiceTest
+-------------------------------------------------------------------------------
+Tests run: 15, Failures: 0, Errors: 13, Skipped: 0, Time elapsed: 0.073 s <<< FAILURE! -- in com.josp.system.service.DeptServiceTest
+com.josp.system.service.DeptServiceTest.testGetDeptById -- Time elapsed: 0.044 s <<< ERROR!
+com.baomidou.mybatisplus.core.exceptions.MybatisPlusException: baseMapper can not be null
+	at com.baomidou.mybatisplus.core.toolkit.ExceptionUtils.mpe(ExceptionUtils.java:49)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.isTrue(Assert.java:38)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.notNull(Assert.java:72)
+	at com.baomidou.mybatisplus.extension.repository.CrudRepository.getBaseMapper(CrudRepository.java:46)
+	at com.baomidou.mybatisplus.extension.repository.IRepository.getById(IRepository.java:183)
+	at com.josp.system.service.impl.DeptServiceImpl.getDeptById(DeptServiceImpl.java:38)
+	at com.josp.system.service.DeptServiceTest.testGetDeptById(DeptServiceTest.java:87)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.josp.system.service.DeptServiceTest.testGetDeptTree -- Time elapsed: 0.003 s <<< ERROR!
+com.baomidou.mybatisplus.core.exceptions.MybatisPlusException: baseMapper can not be null
+	at com.baomidou.mybatisplus.core.toolkit.ExceptionUtils.mpe(ExceptionUtils.java:49)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.isTrue(Assert.java:38)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.notNull(Assert.java:72)
+	at com.baomidou.mybatisplus.extension.repository.CrudRepository.getBaseMapper(CrudRepository.java:46)
+	at com.baomidou.mybatisplus.extension.repository.IRepository.list(IRepository.java:300)
+	at com.josp.system.service.impl.DeptServiceImpl.listAllDepts(DeptServiceImpl.java:27)
+	at com.josp.system.service.impl.DeptServiceImpl.getDeptTree(DeptServiceImpl.java:32)
+	at com.josp.system.service.DeptServiceTest.testGetDeptTree(DeptServiceTest.java:77)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.josp.system.service.DeptServiceTest.testDeleteDept_Success -- Time elapsed: 0.005 s <<< ERROR!
+com.baomidou.mybatisplus.core.exceptions.MybatisPlusException: baseMapper can not be null
+	at com.baomidou.mybatisplus.core.toolkit.ExceptionUtils.mpe(ExceptionUtils.java:49)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.isTrue(Assert.java:38)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.notNull(Assert.java:72)
+	at com.baomidou.mybatisplus.extension.repository.CrudRepository.getBaseMapper(CrudRepository.java:46)
+	at com.baomidou.mybatisplus.extension.repository.IRepository.count(IRepository.java:291)
+	at com.josp.system.service.impl.DeptServiceImpl.deleteDept(DeptServiceImpl.java:76)
+	at com.josp.system.service.DeptServiceTest.testDeleteDept_Success(DeptServiceTest.java:168)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.josp.system.service.DeptServiceTest.testUpdateDept_Success -- Time elapsed: 0.002 s <<< ERROR!
+com.baomidou.mybatisplus.core.exceptions.MybatisPlusException: baseMapper can not be null
+	at com.baomidou.mybatisplus.core.toolkit.ExceptionUtils.mpe(ExceptionUtils.java:49)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.isTrue(Assert.java:38)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.notNull(Assert.java:72)
+	at com.baomidou.mybatisplus.extension.repository.CrudRepository.getBaseMapper(CrudRepository.java:46)
+	at com.baomidou.mybatisplus.extension.repository.IRepository.getById(IRepository.java:183)
+	at com.josp.system.service.impl.DeptServiceImpl.updateDept(DeptServiceImpl.java:56)
+	at com.josp.system.service.DeptServiceTest.testUpdateDept_Success(DeptServiceTest.java:129)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.josp.system.service.DeptServiceTest.testUpdateDept_CircularDependency -- Time elapsed: 0.001 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.josp.system.service.DeptServiceTest.testUpdateDept_CircularDependency(DeptServiceTest.java:152)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:197)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.josp.system.service.DeptServiceTest.testDeleteDept_HasChildren -- Time elapsed: 0.001 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.josp.system.service.DeptServiceTest.testDeleteDept_HasChildren(DeptServiceTest.java:177)
+  2. -> at com.josp.system.service.DeptServiceTest.testDeleteDept_HasChildren(DeptServiceTest.java:178)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:197)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.josp.system.service.DeptServiceTest.testListAllDepts -- Time elapsed: 0.001 s <<< ERROR!
+com.baomidou.mybatisplus.core.exceptions.MybatisPlusException: baseMapper can not be null
+	at com.baomidou.mybatisplus.core.toolkit.ExceptionUtils.mpe(ExceptionUtils.java:49)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.isTrue(Assert.java:38)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.notNull(Assert.java:72)
+	at com.baomidou.mybatisplus.extension.repository.CrudRepository.getBaseMapper(CrudRepository.java:46)
+	at com.baomidou.mybatisplus.extension.repository.IRepository.list(IRepository.java:300)
+	at com.josp.system.service.impl.DeptServiceImpl.listAllDepts(DeptServiceImpl.java:27)
+	at com.josp.system.service.DeptServiceTest.testListAllDepts(DeptServiceTest.java:65)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.josp.system.service.DeptServiceTest.testCreateDept_NullParentId -- Time elapsed: 0.001 s <<< ERROR!
+com.baomidou.mybatisplus.core.exceptions.MybatisPlusException: baseMapper can not be null
+	at com.baomidou.mybatisplus.core.toolkit.ExceptionUtils.mpe(ExceptionUtils.java:49)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.isTrue(Assert.java:38)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.notNull(Assert.java:72)
+	at com.baomidou.mybatisplus.extension.repository.CrudRepository.getBaseMapper(CrudRepository.java:46)
+	at com.baomidou.mybatisplus.extension.repository.IRepository.save(IRepository.java:37)
+	at com.josp.system.service.impl.DeptServiceImpl.createDept(DeptServiceImpl.java:47)
+	at com.josp.system.service.DeptServiceTest.testCreateDept_NullParentId(DeptServiceTest.java:116)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.josp.system.service.DeptServiceTest.testUpdateDept_NotFound -- Time elapsed: 0.004 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.josp.system.service.DeptServiceTest.testUpdateDept_NotFound(DeptServiceTest.java:138)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:197)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.josp.system.service.DeptServiceTest.testBuildDeptTree_Empty -- Time elapsed: 0.001 s <<< ERROR!
+com.baomidou.mybatisplus.core.exceptions.MybatisPlusException: baseMapper can not be null
+	at com.baomidou.mybatisplus.core.toolkit.ExceptionUtils.mpe(ExceptionUtils.java:49)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.isTrue(Assert.java:38)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.notNull(Assert.java:72)
+	at com.baomidou.mybatisplus.extension.repository.CrudRepository.getBaseMapper(CrudRepository.java:46)
+	at com.baomidou.mybatisplus.extension.repository.IRepository.list(IRepository.java:300)
+	at com.josp.system.service.impl.DeptServiceImpl.listAllDepts(DeptServiceImpl.java:27)
+	at com.josp.system.service.impl.DeptServiceImpl.getDeptTree(DeptServiceImpl.java:32)
+	at com.josp.system.service.DeptServiceTest.testBuildDeptTree_Empty(DeptServiceTest.java:205)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.josp.system.service.DeptServiceTest.testGetDeptTreeSelect -- Time elapsed: 0.001 s <<< ERROR!
+com.baomidou.mybatisplus.core.exceptions.MybatisPlusException: baseMapper can not be null
+	at com.baomidou.mybatisplus.core.toolkit.ExceptionUtils.mpe(ExceptionUtils.java:49)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.isTrue(Assert.java:38)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.notNull(Assert.java:72)
+	at com.baomidou.mybatisplus.extension.repository.CrudRepository.getBaseMapper(CrudRepository.java:46)
+	at com.baomidou.mybatisplus.extension.repository.IRepository.list(IRepository.java:300)
+	at com.josp.system.service.impl.DeptServiceImpl.listAllDepts(DeptServiceImpl.java:27)
+	at com.josp.system.service.impl.DeptServiceImpl.getDeptTreeSelect(DeptServiceImpl.java:84)
+	at com.josp.system.service.DeptServiceTest.testGetDeptTreeSelect(DeptServiceTest.java:195)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.josp.system.service.DeptServiceTest.testBuildDeptTree_MultiLevel -- Time elapsed: 0.001 s <<< ERROR!
+com.baomidou.mybatisplus.core.exceptions.MybatisPlusException: baseMapper can not be null
+	at com.baomidou.mybatisplus.core.toolkit.ExceptionUtils.mpe(ExceptionUtils.java:49)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.isTrue(Assert.java:38)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.notNull(Assert.java:72)
+	at com.baomidou.mybatisplus.extension.repository.CrudRepository.getBaseMapper(CrudRepository.java:46)
+	at com.baomidou.mybatisplus.extension.repository.IRepository.list(IRepository.java:300)
+	at com.josp.system.service.impl.DeptServiceImpl.listAllDepts(DeptServiceImpl.java:27)
+	at com.josp.system.service.impl.DeptServiceImpl.getDeptTree(DeptServiceImpl.java:32)
+	at com.josp.system.service.DeptServiceTest.testBuildDeptTree_MultiLevel(DeptServiceTest.java:231)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.josp.system.service.DeptServiceTest.testCreateDept_Success -- Time elapsed: 0.001 s <<< ERROR!
+com.baomidou.mybatisplus.core.exceptions.MybatisPlusException: baseMapper can not be null
+	at com.baomidou.mybatisplus.core.toolkit.ExceptionUtils.mpe(ExceptionUtils.java:49)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.isTrue(Assert.java:38)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.notNull(Assert.java:72)
+	at com.baomidou.mybatisplus.extension.repository.CrudRepository.getBaseMapper(CrudRepository.java:46)
+	at com.baomidou.mybatisplus.extension.repository.IRepository.save(IRepository.java:37)
+	at com.josp.system.service.impl.DeptServiceImpl.createDept(DeptServiceImpl.java:47)
+	at com.josp.system.service.DeptServiceTest.testCreateDept_Success(DeptServiceTest.java:102)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+

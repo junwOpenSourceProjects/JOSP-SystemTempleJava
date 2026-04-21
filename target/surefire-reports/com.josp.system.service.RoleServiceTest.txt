@@ -1,0 +1,109 @@
+-------------------------------------------------------------------------------
+Test set: com.josp.system.service.RoleServiceTest
+-------------------------------------------------------------------------------
+Tests run: 15, Failures: 0, Errors: 8, Skipped: 0, Time elapsed: 0.077 s <<< FAILURE! -- in com.josp.system.service.RoleServiceTest
+com.josp.system.service.RoleServiceTest.testCreateRole_WithMenus -- Time elapsed: 0.053 s <<< ERROR!
+com.baomidou.mybatisplus.core.exceptions.MybatisPlusException: baseMapper can not be null
+	at com.baomidou.mybatisplus.core.toolkit.ExceptionUtils.mpe(ExceptionUtils.java:49)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.isTrue(Assert.java:38)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.notNull(Assert.java:72)
+	at com.baomidou.mybatisplus.extension.repository.CrudRepository.getBaseMapper(CrudRepository.java:46)
+	at com.baomidou.mybatisplus.extension.repository.IRepository.count(IRepository.java:291)
+	at com.josp.system.service.impl.RoleServiceImpl.isCodeExists(RoleServiceImpl.java:148)
+	at com.josp.system.service.impl.RoleServiceImpl.createRole(RoleServiceImpl.java:40)
+	at com.josp.system.service.RoleServiceTest.testCreateRole_WithMenus(RoleServiceTest.java:114)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.josp.system.service.RoleServiceTest.testUpdateRole_NotFound -- Time elapsed: 0.001 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.josp.system.service.RoleServiceTest.testUpdateRole_NotFound(RoleServiceTest.java:139)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:197)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.josp.system.service.RoleServiceTest.testListAllRoles -- Time elapsed: 0.002 s <<< ERROR!
+com.baomidou.mybatisplus.core.exceptions.MybatisPlusException: baseMapper can not be null
+	at com.baomidou.mybatisplus.core.toolkit.ExceptionUtils.mpe(ExceptionUtils.java:49)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.isTrue(Assert.java:38)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.notNull(Assert.java:72)
+	at com.baomidou.mybatisplus.extension.repository.CrudRepository.getBaseMapper(CrudRepository.java:46)
+	at com.baomidou.mybatisplus.extension.repository.IRepository.list(IRepository.java:300)
+	at com.josp.system.service.impl.RoleServiceImpl.listAllRoles(RoleServiceImpl.java:28)
+	at com.josp.system.service.RoleServiceTest.testListAllRoles(RoleServiceTest.java:65)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.josp.system.service.RoleServiceTest.testCreateRole_CodeExists -- Time elapsed: 0.001 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.josp.system.service.RoleServiceTest.testCreateRole_CodeExists(RoleServiceTest.java:100)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:197)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.josp.system.service.RoleServiceTest.testCreateRole_Success -- Time elapsed: 0.001 s <<< ERROR!
+com.baomidou.mybatisplus.core.exceptions.MybatisPlusException: baseMapper can not be null
+	at com.baomidou.mybatisplus.core.toolkit.ExceptionUtils.mpe(ExceptionUtils.java:49)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.isTrue(Assert.java:38)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.notNull(Assert.java:72)
+	at com.baomidou.mybatisplus.extension.repository.CrudRepository.getBaseMapper(CrudRepository.java:46)
+	at com.baomidou.mybatisplus.extension.repository.IRepository.count(IRepository.java:291)
+	at com.josp.system.service.impl.RoleServiceImpl.isCodeExists(RoleServiceImpl.java:148)
+	at com.josp.system.service.impl.RoleServiceImpl.createRole(RoleServiceImpl.java:40)
+	at com.josp.system.service.RoleServiceTest.testCreateRole_Success(RoleServiceTest.java:91)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.josp.system.service.RoleServiceTest.testGetRoleById -- Time elapsed: 0.002 s <<< ERROR!
+com.baomidou.mybatisplus.core.exceptions.MybatisPlusException: baseMapper can not be null
+	at com.baomidou.mybatisplus.core.toolkit.ExceptionUtils.mpe(ExceptionUtils.java:49)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.isTrue(Assert.java:38)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.notNull(Assert.java:72)
+	at com.baomidou.mybatisplus.extension.repository.CrudRepository.getBaseMapper(CrudRepository.java:46)
+	at com.baomidou.mybatisplus.extension.repository.IRepository.getById(IRepository.java:183)
+	at com.josp.system.service.impl.RoleServiceImpl.getRoleById(RoleServiceImpl.java:33)
+	at com.josp.system.service.RoleServiceTest.testGetRoleById(RoleServiceTest.java:77)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.josp.system.service.RoleServiceTest.testDeleteRole_Success -- Time elapsed: 0.003 s <<< ERROR!
+com.baomidou.mybatisplus.core.exceptions.MybatisPlusException: baseMapper can not be null
+	at com.baomidou.mybatisplus.core.toolkit.ExceptionUtils.mpe(ExceptionUtils.java:49)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.isTrue(Assert.java:38)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.notNull(Assert.java:72)
+	at com.baomidou.mybatisplus.extension.repository.CrudRepository.getBaseMapper(CrudRepository.java:46)
+	at com.baomidou.mybatisplus.extension.repository.IRepository.removeById(IRepository.java:62)
+	at com.josp.system.service.impl.RoleServiceImpl.deleteRole(RoleServiceImpl.java:109)
+	at com.josp.system.service.RoleServiceTest.testDeleteRole_Success(RoleServiceTest.java:158)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.josp.system.service.RoleServiceTest.testUpdateRole_Success -- Time elapsed: 0.001 s <<< ERROR!
+com.baomidou.mybatisplus.core.exceptions.MybatisPlusException: baseMapper can not be null
+	at com.baomidou.mybatisplus.core.toolkit.ExceptionUtils.mpe(ExceptionUtils.java:49)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.isTrue(Assert.java:38)
+	at com.baomidou.mybatisplus.core.toolkit.Assert.notNull(Assert.java:72)
+	at com.baomidou.mybatisplus.extension.repository.CrudRepository.getBaseMapper(CrudRepository.java:46)
+	at com.baomidou.mybatisplus.extension.repository.IRepository.count(IRepository.java:291)
+	at com.josp.system.service.impl.RoleServiceImpl.isCodeExists(RoleServiceImpl.java:148)
+	at com.josp.system.service.impl.RoleServiceImpl.updateRole(RoleServiceImpl.java:70)
+	at com.josp.system.service.RoleServiceTest.testUpdateRole_Success(RoleServiceTest.java:130)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+

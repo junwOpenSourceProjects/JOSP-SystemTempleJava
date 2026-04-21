@@ -2,6 +2,7 @@ package com.josp.system.controller;
 
 import com.josp.system.common.api.PageResult;
 import com.josp.system.common.api.Result;
+import com.josp.system.common.utils.ExportUtils;
 import com.josp.system.entity.OperLog;
 import com.josp.system.service.OperLogService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 @Tag(name = "操作日志接口")
 @RestController
-@RequestMapping("/api/v1/operLog")
+@RequestMapping("/api/v1/oper-logs")
 @RequiredArgsConstructor
 public class OperLogController {
 
@@ -51,9 +52,24 @@ public class OperLogController {
         return Result.success(operLogService.deleteOperLogs(ids));
     }
 
-    @Operation(summary = "清理操作日志")
+    @Operation(summary = "清空所有操作日志")
     @DeleteMapping("/clean")
     public Result<Integer> cleanOperLogs(@RequestParam(defaultValue = "30") int days) {
         return Result.success(operLogService.cleanOperLogs(days));
+    }
+
+    @Operation(summary = "导出操作日志")
+    @GetMapping("/export")
+    public void exportOperLogs(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String operName,
+            @RequestParam(required = false) String status,
+            jakarta.servlet.http.HttpServletResponse response) {
+        try {
+            List<OperLog> operLogs = operLogService.listOperLogs(title, operName, status);
+            ExportUtils.exportOperLogs(operLogs, response);
+        } catch (Exception e) {
+            throw new RuntimeException("导出操作日志失败: " + e.getMessage());
+        }
     }
 }

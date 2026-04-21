@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -60,5 +59,21 @@ public class OperLogServiceImpl extends ServiceImpl<OperLogMapper, OperLog> impl
         LambdaQueryWrapper<OperLog> wrapper = new LambdaQueryWrapper<>();
         wrapper.lt(OperLog::getOperTime, clearTime);
         return baseMapper.delete(wrapper);
+    }
+
+    @Override
+    public List<OperLog> listOperLogs(String title, String operName, String status) {
+        LambdaQueryWrapper<OperLog> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByDesc(OperLog::getOperTime);
+        if (StringUtils.hasText(title)) {
+            wrapper.like(OperLog::getTitle, title);
+        }
+        if (StringUtils.hasText(operName)) {
+            wrapper.like(OperLog::getOperName, operName);
+        }
+        if (StringUtils.hasText(status)) {
+            wrapper.eq(OperLog::getStatus, status);
+        }
+        return list(wrapper);
     }
 }

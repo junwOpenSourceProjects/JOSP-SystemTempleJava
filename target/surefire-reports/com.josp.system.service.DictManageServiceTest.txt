@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.josp.system.service.DictManageServiceTest
+-------------------------------------------------------------------------------
+Tests run: 32, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.075 s -- in com.josp.system.service.DictManageServiceTest

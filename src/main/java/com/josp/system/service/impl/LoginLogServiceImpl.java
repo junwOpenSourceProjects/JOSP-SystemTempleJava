@@ -21,12 +21,15 @@ import java.util.List;
 public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> implements LoginLogService {
 
     @Override
-    public PageResult<LoginLog> pageLoginLogs(int pageNum, int pageSize, String username) {
+    public PageResult<LoginLog> pageLoginLogs(int pageNum, int pageSize, String username, String status) {
         Page<LoginLog> page = PageUtils.buildPage(pageNum, pageSize);
         LambdaQueryWrapper<LoginLog> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByDesc(LoginLog::getLoginTime);
         if (StringUtils.hasText(username)) {
             wrapper.like(LoginLog::getUsername, username);
+        }
+        if (StringUtils.hasText(status)) {
+            wrapper.eq(LoginLog::getStatus, status);
         }
         Page<LoginLog> resultPage = page(page, wrapper);
         return PageUtils.buildPageResult(resultPage);
@@ -48,5 +51,18 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
         LambdaQueryWrapper<LoginLog> wrapper = new LambdaQueryWrapper<>();
         wrapper.lt(LoginLog::getLoginTime, clearTime);
         return baseMapper.delete(wrapper);
+    }
+
+    @Override
+    public List<LoginLog> listLoginLogs(String username, String status) {
+        LambdaQueryWrapper<LoginLog> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByDesc(LoginLog::getLoginTime);
+        if (StringUtils.hasText(username)) {
+            wrapper.like(LoginLog::getUsername, username);
+        }
+        if (StringUtils.hasText(status)) {
+            wrapper.eq(LoginLog::getStatus, status);
+        }
+        return list(wrapper);
     }
 }
