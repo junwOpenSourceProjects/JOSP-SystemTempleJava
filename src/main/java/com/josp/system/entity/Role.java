@@ -16,6 +16,7 @@ public class Role {
     private String code;
     private Integer sort;
     private Integer status;
+    private String remark;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 }

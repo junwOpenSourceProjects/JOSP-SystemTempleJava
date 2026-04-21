@@ -46,6 +46,11 @@ public class DictData implements Serializable {
     private Integer status;
 
     /**
+     * 备注
+     */
+    private String remark;
+
+    /**
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
@@ -56,4 +61,16 @@ public class DictData implements Serializable {
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
+
+    /**
+     * 创建人ID
+     */
+    @TableField(fill = FieldFill.INSERT)
+    private Long createUser;
+
+    /**
+     * 修改人ID
+     */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private Long updateUser;
 }

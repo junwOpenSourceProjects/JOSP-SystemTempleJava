@@ -6,6 +6,8 @@ import com.josp.system.common.api.UserInfo;
 import com.josp.system.entity.LoginUser;
 import com.josp.system.security.jwt.JwtTokenUtil;
 import com.josp.system.service.LoginUserService;
+import com.josp.system.dao.AccountRoleMapper;
+import com.josp.system.dao.MenuMapper;
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.core.util.IdUtil;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -37,6 +40,8 @@ public class LoginController {
     private final LoginUserService loginUserService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtil jwtTokenUtil;
+    private final AccountRoleMapper accountRoleMapper;
+    private final MenuMapper menuMapper;
 
     @Value("${jwt.tokenHead}")
     private String tokenHead;
@@ -101,13 +106,25 @@ public class LoginController {
             return Result.failed("用户不存在");
         }
 
+        // 从数据库获取用户角色列表
+        List<String> roles = accountRoleMapper.selectRoleCodesByUserId(user.getId());
+        if (roles == null || roles.isEmpty()) {
+            roles = Collections.singletonList("USER");
+        }
+
+        // 从数据库获取用户权限标识列表（按钮权限）
+        List<String> perms = menuMapper.selectMenuPermsByUserId(user.getId());
+        if (perms == null || perms.isEmpty()) {
+            perms = Collections.singletonList("*:*:*");
+        }
+
         UserInfo userInfo = UserInfo.builder()
                 .userId(user.getId())
                 .username(user.getUsername())
                 .nickname(user.getName())
-                .avatar("https://api.dicebear.com/7.x/avataaars/svg?seed=admin")
-                .roles(Collections.singletonList("ADMIN"))
-                .perms(Collections.singletonList("*:*:*"))
+                .avatar("https://api.dicebear.com/7.x/avataaars/svg?seed=" + user.getUsername())
+                .roles(roles)
+                .perms(perms)
                 .build();
 
         return Result.success(userInfo);

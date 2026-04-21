@@ -6,9 +6,7 @@ import com.josp.system.service.MenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,8 +20,8 @@ public class MenuController {
 
     @Operation(summary = "获取路由列表")
     @GetMapping("/routes")
-    public Result<List<RouteVO>> getRoutes() {
-        List<RouteVO> routes = menuService.listRoutes();
+    public Result<List<RouteVO>> getRoutes(@RequestParam Long userId) {
+        List<RouteVO> routes = menuService.listRoutesByUserId(userId);
         return Result.success(routes);
     }
 }

@@ -9,36 +9,57 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
- * 字典类型表
+ * 部门表
  */
 @Data
-@TableName("sys_dict_type")
-public class DictType implements Serializable {
+@TableName("sys_dept")
+public class Dept implements Serializable {
 
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
-     * 字典类型名称
+     * 父部门ID
+     */
+    private Long parentId;
+
+    /**
+     * 部门名称
      */
     private String name;
 
     /**
-     * 字典类型编码
+     * 部门编码
      */
     private String code;
+
+    /**
+     * 排序
+     */
+    private Integer sort;
+
+    /**
+     * 负责人
+     */
+    private String leader;
+
+    /**
+     * 联系电话
+     */
+    private String phone;
+
+    /**
+     * 邮箱
+     */
+    private String email;
 
     /**
      * 状态(0:禁用,1:正常)
      */
     private Integer status;
-
-    /**
-     * 备注
-     */
-    private String remark;
 
     /**
      * 创建时间
@@ -63,4 +84,9 @@ public class DictType implements Serializable {
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Long updateUser;
+
+    /**
+     * 子部门列表（用于树形结构）
+     */
+    private List<Dept> children;
 }

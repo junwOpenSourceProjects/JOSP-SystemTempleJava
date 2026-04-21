@@ -1,81 +1,55 @@
 package com.josp.system.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.io.Serializable;
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
-*Created by Intellij IDEA.
-*Project:JOSP-examinationSystemJava
-*Package:wo1261931780.JOSPexaminationSystemJava.entity
-*@author liujiajun_junw
-*@Date 2023-03-15-23  星期六
-*@description
-*/
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
- * 账号角色表
+ * 用户角色关联表
  */
-@Schema(description = "账号角色表")
+@Schema(description = "用户角色关联表")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName(value = "account_role")
 public class AccountRole implements Serializable {
-	/**
-	 * 主键
-	 */
-	@TableId(value = "id", type = IdType.ASSIGN_ID)
-	@Schema(description = "主键")
-	private String id;
-	
-	/**
-	 * 角色
-	 */
-	@TableField(value = "roles")
-	@Schema(description = "角色")
-	private List<String> roles;
-	
-	/**
-	 * 说明
-	 */
-	@TableField(value = "introduction")
-	@Schema(description = "说明")
-	private String introduction;
-	
-	/**
-	 * 头像
-	 */
-	@TableField(value = "avatar")
-	@Schema(description = "头像")
-	private String avatar;
-	
-	/**
-	 * 名称
-	 */
-	@TableField(value = "`name`")
-	@Schema(description = "名称")
-	private String name;
-	
-	private static final long serialVersionUID = 1L;
-	
-	public static final String COL_ID = "id";
-	
-	public static final String COL_ROLES = "roles";
-	
-	public static final String COL_INTRODUCTION = "introduction";
-	
-	public static final String COL_AVATAR = "avatar";
-	
-	public static final String COL_NAME = "name";
+
+    /**
+     * 主键，雪花ID
+     */
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
+    @Schema(description = "主键")
+    private Long id;
+
+    /**
+     * 用户ID
+     */
+    @Schema(description = "用户ID")
+    private Long userId;
+
+    /**
+     * 角色ID
+     */
+    @Schema(description = "角色ID")
+    private Long roleId;
+
+    /**
+     * 创建时间
+     */
+    @TableField(fill = FieldFill.INSERT)
+    @Schema(description = "创建时间")
+    private LocalDateTime createTime;
+
+    private static final long serialVersionUID = 1L;
 }

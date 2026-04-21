@@ -12,6 +12,8 @@ import java.io.Serial;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 登录用户表
@@ -116,13 +118,24 @@ public class LoginUser implements UserDetails {
 	@TableField(exist = false)
 	@Schema(description = "验证码")
 	private String captchaCode;
-	
+
 	@Serial
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * 角色编码列表（非数据库字段）
+	 */
+	@TableField(exist = false)
+	private List<String> roles;
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"));
+		if (roles == null || roles.isEmpty()) {
+			return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+		}
+		return roles.stream()
+				.map(role -> new SimpleGrantedAuthority(role.startsWith("ROLE_") ? role : "ROLE_" + role))
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -153,5 +166,9 @@ public class LoginUser implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return status != null && status == 1;
+	}
+
+	public void setRoles(List<String> roles) {
+		this.roles = roles;
 	}
 }
