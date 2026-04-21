@@ -1,322 +1,250 @@
-# JOSP-SystemTempleJava
+# JOSP-System 后端服务
 
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.4-brightgreen.svg)
-![Java](https://img.shields.io/badge/Java-17-blue.svg)
-![MyBatis-Plus](https://img.shields.io/badge/MyBatis--Plus-3.5.10-blue.svg)
-![MySQL](https://img.shields.io/badge/MySQL-8.0-orange.svg)
-![Redis](https://img.shields.io/badge/Redis-7.0-red.svg)
-![License](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)
+企业级后台管理系统后端服务，基于 Spring Boot，提供用户管理、角色权限管理、部门管理、字典管理、日志管理等核心功能。
 
-> **JOSP 后端系统模板** - 基于 Spring Boot 3.4 + MyBatis-Plus + Redis 的现代化后端开发底座，支持雪花 ID 生成、动态路由、字典缓存。
+## 技术栈
 
----
-
-##配套前端模板
-
-- **Vue3 版本**: [JOSP-SystemTempleVue3](https://github.com/junwOpenSourceProjects/JOSP-SystemTempleVue3)
-
----
-
-## 系统架构
-
-```mermaid
-graph TB
-    subgraph Frontend["前端展示层"]
-        Vue3["Vue3 + Vite + Element Plus"]
-    end
-
-    subgraph Gateway["安全认证层"]
-        JWT["JWT Token"]
-        Security["Spring Security 6"]
-    end
-
-    subgraph Backend["后端服务层 Spring Boot 3.4"]
-        Controller["Controller 层<br/>/api/v1/*"]
-        Service["Service 层<br/>业务逻辑"]
-        Mapper["Mapper 层<br/>MyBatis-Plus"]
-
-        Controller --> Service
-        Service --> Mapper
-    end
-
-    subgraph Cache["缓存层"]
-        Redis["Redis 7.x<br/>字典数据缓存 24h"]
-    end
-
-    subgraph Database["数据层"]
-        MySQL["MySQL 8.0<br/>无外键约束<br/>雪花 ID 主键"]
-    end
-
-    subgraph Tools["工具层"]
-        Knife4j["Knife4j API 文档"]
-        Snowflake["雪花 ID 生成器"]
-    end
-
-    Vue3 --> JWT
-    JWT -.-> Security
-    Security --> Controller
-    Mapper --> MySQL
-    Service -.-> Redis
-    Controller --> Tools
-
-    style Frontend fill:#e1f5ff
-    style Gateway fill:#fff0f0
-    style Backend fill:#fff4e6
-    style Cache fill:#f3e5ff
-    style Database fill:#e8f5e9
-    style Tools fill:#fff3e0
-```
-
----
-
-## 核心技术栈
-
-| 技术 | 版本 | 说明 |
+| 分类 | 技术 | 版本 |
 |------|------|------|
-| Spring Boot | 3.4.4 | 核心框架 |
-| Java | 17 | 开发语言 |
-| MyBatis-Plus | 3.5.10.1 | ORM 框架 + 雪花 ID |
-| MySQL | 8.0 | 关系数据库 |
-| Redis | 7.x | 缓存（字典数据） |
-| Spring Security | 6.x | 安全框架 |
-| JJWT | 0.12.6 | JWT 令牌处理 |
-| Knife4j | 4.5.0 | Swagger3 API 文档 |
-| Hutool | 5.8.28 | 工具库 |
-
----
-
-## 核心设计原则
-
-### 1. 雪花 ID 主键
-
-所有表使用 `BIGINT` 主键，通过 MyBatis-Plus 的 `IdentifierGenerator` 接口集成 Hutool 雪花算法，生成全局唯一 19 位 ID。
-
-```java
-@TableId(type = IdType.ASSIGN_ID)
-private Long id;
-```
-
-### 2. 无外键约束
-
-数据库层**不建立外键关联**，通过 Java 代码在 Service 层进行逻辑关联，保证数据库解耦和性能。
-
-### 3. Redis 字典缓存
-
-系统字典数据（用户状态、菜单状态、角色状态、文章状态等）通过 Redis 缓存，TTL 24 小时，减少数据库查询。
-
----
+| 核心框架 | Spring Boot | 3.4.4 |
+| Java 版本 | OpenJDK | 17 |
+| ORM | MyBatis-Plus | 3.5.10.1 |
+| 数据库 | MySQL | 8.0+ |
+| 缓存 | Redis | 6.0+ |
+| 认证 | JWT (jjwt) | 0.12.6 |
+| API 文档 | Knife4j | 4.5.0 |
+| 工具库 | Hutool | 5.8.28 |
+| JSON | FastJSON2 | 2.0.52 |
+| 代码生成 | Lombok | 1.18.30+ |
 
 ## 项目结构
 
 ```
-JOSP-SystemTempleJava/
-├── src/main/java/com/josp/system/
-│   ├── controller/               # 控制器层
-│   │   ├── LoginController.java  # 登录认证
-│   │   ├── MenuController.java   # 菜单管理
-│   │   ├── DictController.java   # 字典管理
-│   │   ├── DemoController.java   # 示例表格（综合表格）
-│   │   └── DashboardController.java # 首页数据
-│   │
-│   ├── service/                  # 业务逻辑层
-│   │   ├── LoginUserService.java
-│   │   ├── MenuService.java
-│   │   ├── DictService.java      # 含 Redis 缓存
-│   │   └── impl/
-│   │
-│   ├── dao/                     # 数据访问层
-│   │   ├── LoginUserMapper.java
-│   │   ├── MenuMapper.java
-│   │   ├── DictTypeMapper.java
-│   │   ├── DictDataMapper.java
-│   │   └── DemoMapper.java
-│   │
-│   ├── entity/                   # 实体类
-│   │   ├── LoginUser.java
-│   │   ├── Menu.java
-│   │   ├── Role.java
-│   │   ├── AccountRole.java
-│   │   ├── DictType.java        # 字典类型
-│   │   ├── DictData.java        # 字典数据
-│   │   └── Demo.java            # 示例表格
-│   │
-│   ├── config/                   # 配置类
-│   │   ├── SnowflakeIdGenerator.java   # 雪花 ID 生成器
-│   │   ├── RedisConfig.java           # Redis + CacheManager
-│   │   ├── MybatisPlusConfig.java     # 分页插件
-│   │   └── MyMetaObjectHandler.java   # 自动填充
-│   │
-│   ├── security/                 # 安全认证
-│   │   ├── config/SecurityConfig.java
-│   │   ├── filter/JwtAuthenticationFilter.java
-│   │   └── handling/JwtAuthenticationEntryPoint.java
-│   │
-│   └── common/                   # 通用模块
-│       ├── api/Result.java       # 统一响应封装
-│       ├── api/PageResult.java   # 分页结果
-│       └── exception/            # 异常处理
-│
-├── src/main/resources/
-│   ├── application.yml           # 主配置
-│   └── mapper/                   # XML 映射文件
-│
-├── db/
-│   └── schema.sql                # 数据库初始化脚本
-│
-└── pom.xml
+src/main/java/com/josp/system/
+├── controller/          # REST API 控制器
+│   ├── AuthController.java      # 认证（登录/登出/当前用户）
+│   ├── UserController.java      # 用户管理
+│   ├── RoleController.java      # 角色管理
+│   ├── MenuController.java      # 菜单管理
+│   ├── DeptController.java      # 部门管理
+│   ├── DictController.java      # 字典管理
+│   ├── LoginLogController.java  # 登录日志
+│   ├── OperLogController.java   # 操作日志
+│   ├── NoticeController.java   # 通知公告
+│   ├── OnlineUserController.java# 在线用户
+│   └── MonitorController.java   # 系统监控
+├── service/             # 业务逻辑层
+│   └── impl/            # Service 实现
+├── dao/                 # 数据访问层（Mapper）
+├── entity/              # 数据库实体
+├── dto/                 # 数据传输对象
+├── common/
+│   ├── annotation/      # 自定义注解（如 @OperLog）
+│   ├── aspect/          # AOP 切面
+│   ├── api/             # API 统一返回格式和 VO
+│   └── utils/           # 工具类（IP、导出等）
+└── security/
+    ├── config/          # 安全配置
+    ├── filter/          # JWT 过滤器
+    └── service/          # 安全相关服务
 ```
 
----
+## 功能模块
 
-## 数据库表结构
-
-```mermaid
-erDiagram
-    login_user {
-        bigint id PK "雪花ID"
-        varchar name "姓名"
-        varchar username "用户名"
-        varchar password "密码(BCrypt)"
-        varchar phone "手机号"
-        varchar sex "性别"
-        varchar id_number "身份证号"
-        int status "状态 0:禁用 1:正常"
-    }
-
-    sys_role {
-        bigint id PK "雪花ID"
-        varchar name "角色名称"
-        varchar code "角色编码"
-        int sort "排序"
-        int status "状态"
-    }
-
-    sys_user_role {
-        bigint user_id FK "用户ID"
-        bigint role_id FK "角色ID"
-    }
-
-    sys_menu {
-        bigint id PK "雪花ID"
-        bigint parent_id "父菜单ID"
-        varchar name "菜单名称"
-        int type "类型 1:目录 2:菜单 3:按钮"
-        varchar path "路由路径"
-        varchar component "组件路径"
-        varchar icon "图标"
-        int sort "排序"
-        int visible "显示状态"
-    }
-
-    sys_dict_type {
-        bigint id PK "雪花ID"
-        varchar dict_code "字典编码"
-        varchar dict_name "字典名称"
-    }
-
-    sys_dict_data {
-        bigint id PK "雪花ID"
-        bigint dict_type_id FK "字典类型ID"
-        varchar dict_label "字典标签"
-        varchar dict_value "字典值"
-        int sort "排序"
-        int status "状态"
-    }
-
-    demo {
-        bigint id PK "雪花ID"
-        varchar title "标题"
-        varchar author "作者"
-        int pageviews "阅读量"
-        varchar status "状态"
-        date timestamp "创建日期"
-    }
-
-    login_user ||--o{ sys_user_role : "拥有"
-    sys_role ||--o{ sys_user_role : "包含"
-    sys_dict_type ||--o{ sys_dict_data : "包含"
-```
-
----
-
-## API 接口
-
-### 认证接口
-
-| 方法 | 路径 | 说明 |
+### 核心管理模块
+| 模块 | 路径 | 说明 |
 |------|------|------|
-| POST | `/api/v1/auth/login` | 用户登录 |
+| 认证 | `/api/v1/auth/*` | 登录、登出、获取当前用户、验证码 |
+| 用户 | `/api/v1/users/*` | 分页、创建、更新、删除、重置密码 |
+| 角色 | `/api/v1/roles/*` | 分页、创建、更新、删除、分配菜单 |
+| 菜单 | `/api/v1/menus/*` | 树形、路由、选项、CRUD |
+| 部门 | `/api/v1/dept/*` | 树形、选项、CRUD |
 
-### 菜单接口
-
-| 方法 | 路径 | 说明 |
+### 系统运维模块
+| 模块 | 路径 | 说明 |
 |------|------|------|
-| GET | `/api/v1/menus/routes` | 获取用户路由菜单 |
-| GET | `/api/v1/menus/all` | 获取所有菜单（树形） |
-
-### 字典接口
-
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/api/v1/dict/types` | 获取所有字典类型 |
-| GET | `/api/v1/dict/data/{dictCode}` | 根据编码获取字典数据 |
-| GET | `/api/v1/dict/data/type/{dictTypeId}` | 根据类型ID获取 |
-| GET | `/api/v1/dict/data/all` | 获取所有字典数据分组 |
-
-### 示例接口
-
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/api/v1/demo/table/list` | 获取表格列表（分页+搜索） |
-| GET | `/api/v1/demo/table/{id}` | 获取单条记录 |
-| POST | `/api/v1/demo/table` | 新增记录 |
-| PUT | `/api/v1/demo/table/{id}` | 更新记录 |
-| DELETE | `/api/v1/demo/table/{id}` | 删除记录 |
-
----
+| 登录日志 | `/api/v1/login-logs/*` | 分页、详情、删除、导出、IP归属地 |
+| 操作日志 | `/api/v1/oper-logs/*` | 分页、详情、删除、清空、导出、AOP自动记录 |
+| 通知公告 | `/api/v1/notices/*` | CRUD、发布、撤回、置顶 |
+| 在线用户 | `/api/v1/online-users/*` | 分页、强制下线、Redis存储 |
+| 系统监控 | `/api/v1/monitor/*` | 服务器、数据库、Redis状态 |
 
 ## 快速开始
 
 ### 环境要求
-
 - JDK 17+
-- Maven 3.9+
+- Maven 3.8+
 - MySQL 8.0+
-- Redis 7.x
+- Redis 6.0+
 
-### 启动步骤
+### 数据库初始化
 
-```bash
-# 1. 克隆项目
-git clone https://github.com/junwOpenSourceProjects/JOSP-SystemTempleJava.git
-cd JOSP-SystemTempleJava
+```sql
+-- 创建数据库
+CREATE DATABASE IF NOT EXISTS postgraduate DEFAULT CHARACTER SET utf8mb4;
 
-# 2. 初始化数据库
-mysql -u root -p < db/schema.sql
-
-# 3. 修改数据库/Redis 配置
-# 编辑 src/main/resources/application.yml
-
-# 4. 编译运行
-mvn clean spring-boot:run
-
-# 5. 访问地址
-#   - 后端服务: http://localhost:8081
-#   - API 文档: http://localhost:8081/doc.html
+-- 执行初始化脚本
+source db/schema.sql;
 ```
 
----
+### 配置
 
-## 默认账号
+编辑 `src/main/resources/application.yml`，修改数据库和 Redis 连接信息：
 
-| 用户名 | 密码 | 角色 |
-|--------|------|------|
-| admin | 123456 | 超级管理员 |
-| test_male | 123456 | 系统管理员 |
-| test_female | 123456 | 普通用户 |
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/postgraduate?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: root
+    password: your_password
+  redis:
+    host: localhost
+    port: 6379
+```
 
----
+### 编译运行
 
-## 许可证
+```bash
+# 编译
+mvn compile
 
-本项目采用 **AGPL-3.0** 许可证 - 详情见 [LICENSE](LICENSE) 文件。
+# 启动（开发）
+mvn spring-boot:run
+
+# 打包
+mvn package -DskipTests
+
+# 运行 JAR
+java -jar target/josp-system-1.0.0-SNAPSHOT.jar
+```
+
+服务启动后访问 `http://localhost:8081/api/v1/doc.html` 查看 Knife4j API 文档。
+
+### 默认账号
+
+| 账号 | 密码 | 角色 |
+|------|------|------|
+| admin | admin123 | 超级管理员 |
+
+## 数据库设计
+
+核心表结构（15张）：
+
+| 表名 | 说明 |
+|------|------|
+| `sys_login_user` | 用户表（Snowflake ID） |
+| `sys_role` | 角色表 |
+| `sys_menu` | 菜单权限表 |
+| `sys_dept` | 部门表 |
+| `sys_post` | 岗位表 |
+| `account_role` | 用户-角色关联表 |
+| `sys_role_menu` | 角色-菜单关联表 |
+| `sys_dict_type` | 字典类型 |
+| `sys_dict_data` | 字典数据 |
+| `sys_oper_log` | 操作日志 |
+| `sys_login_log` | 登录日志 |
+| `sys_notice` | 通知公告 |
+| `sys_online_user` | 在线用户（Redis） |
+| `sys_config` | 系统配置 |
+| `sys_file` | 文件记录表 |
+
+详细设计见 [db/database_design.md](db/database_design.md)
+
+## 系统架构图
+
+```mermaid
+graph TB
+    subgraph 前端
+        A[Vue 3 + Vite<br/>Element Plus<br/>ECharts]
+    end
+
+    subgraph 网关层
+        B[Spring Security<br/>JWT Filter]
+    end
+
+    subgraph 应用层
+        C[Spring Boot 3.4<br/>Controller Layer]
+        D[Service Layer<br/>业务逻辑]
+    end
+
+    subgraph 数据层
+        E[(MySQL<br/>postgraduate)]
+        F[(Redis<br/>缓存/会话)]
+    end
+
+    A -->|HTTP/HTTPS| B
+    B --> C
+    C --> D
+    D --> E
+    D --> F
+
+    style A fill:#e1f5ff,stroke:#1456f0
+    style E fill:#fff3e1,stroke:#f0a020
+    style F fill:#fff3e1,stroke:#f0a020
+```
+
+## 用户认证流程
+
+```mermaid
+sequenceDiagram
+    participant U as 前端
+    participant A as AuthController
+    participant S as Service
+    participant R as Redis
+    participant DB as MySQL
+
+    U->>A: POST /api/v1/auth/login {username, password}
+    A->>S: login(username, password)
+    S->>DB: 查询用户信息
+    DB-->>S: 用户记录
+    S-->>A: 验证密码
+    A->>R: 存储登录会话
+    R-->>A: sessionId
+    A-->>U: {token, userInfo, roles, permissions}
+
+    Note over U,A: 后续请求带上 JWT Token
+
+    U->>A: GET /api/v1/users/page Header: Authorization
+    A->>A: JWT Filter 验证 Token
+    A-->>U: 分页用户数据
+```
+
+## 权限控制流程
+
+```mermaid
+flowchart LR
+    A[用户登录] --> B[获取角色+菜单权限]
+    B --> C[动态路由生成]
+    C --> D[前端菜单渲染]
+    D --> E[按钮级权限 v-hasPermission]
+    E --> F{权限校验}
+    F -->|有权限| G[显示操作按钮]
+    F -->|无权限| H[隐藏操作按钮]
+```
+
+## API 统一响应格式
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": { ... },
+  "timestamp": 1713600000000
+}
+```
+
+| code | 说明 |
+|------|------|
+| 200 | 成功 |
+| 401 | 未登录或 Token 过期 |
+| 403 | 无权限 |
+| 404 | 资源不存在 |
+| 500 | 服务器内部错误 |
+
+## 贡献指南
+
+1. Fork 本仓库
+2. 创建特性分支 `git checkout -b feat/your-feature`
+3. 提交更改 `git commit -m 'feat: add some feature'`
+4. 推送到分支 `git push origin feat/your-feature`
+5. 创建 Pull Request
