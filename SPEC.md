@@ -61,9 +61,179 @@ src/main/java/com/josp/system/
     └── utils/           # 工具类（IP、导出等）
 ```
 
-## 4. 数据库设计
+---
 
-### 4.1 核心表（15张）
+## 4. 架构设计
+
+### 4.1 系统架构图
+
+```mermaid
+graph TB
+    subgraph Frontend["前端层"]
+        Vue3["Vue3 + ElementPlus<br/>JOSP-SystemTempleVue3"]
+    end
+
+    subgraph Gateway["网关层"]
+        JwtFilter["JwtAuthenticationFilter<br/>JWT 认证过滤器"]
+        Cors["CORS 跨域配置"]
+    end
+
+    subgraph Security["安全层"]
+        SecurityConfig["Security Config<br/>Spring Security"]
+        Permission["权限控制<br/>角色-菜单关联"]
+    end
+
+    subgraph Application["应用层"]
+        Auth["AuthController<br/>认证管理"]
+        User["UserController<br/>用户管理"]
+        Role["RoleController<br/>角色管理"]
+        Menu["MenuController<br/>菜单管理"]
+        Dept["DeptController<br/>部门管理"]
+        Dict["DictController<br/>字典管理"]
+        Log["OperLogController<br/>操作日志"]
+        Monitor["MonitorController<br/>系统监控"]
+    end
+
+    subgraph Service["服务层"]
+        UserService["UserService"]
+        RoleService["RoleService"]
+        MenuService["MenuService"]
+        DictService["DictService"]
+    end
+
+    subgraph Data["数据层"]
+        MyBatisPlus["MyBatis-Plus 3.5.10.1"]
+        Redis["Redis 6.0+<br/>缓存+会话"]
+        MySQL["MySQL 8.0+"]
+    end
+
+    Frontend --> JwtFilter
+    JwtFilter --> Cors
+    Cors --> SecurityConfig
+    SecurityConfig --> Auth
+    SecurityConfig --> User
+    SecurityConfig --> Role
+    SecurityConfig --> Menu
+    SecurityConfig --> Dept
+    SecurityConfig --> Dict
+    SecurityConfig --> Log
+    SecurityConfig --> Monitor
+    Auth --> UserService
+    User --> UserService
+    Role --> RoleService
+    Menu --> MenuService
+    Dict --> DictService
+    UserService --> MyBatisPlus
+    RoleService --> MyBatisPlus
+    MenuService --> MyBatisPlus
+    DictService --> MyBatisPlus
+    MyBatisPlus --> MySQL
+    SecurityConfig --> Redis
+    Auth --> Redis
+```
+
+### 4.2 JWT 认证流程
+
+```mermaid
+sequenceDiagram
+    participant Client as 前端 Client
+    participant JwtFilter as JwtAuthenticationFilter
+    participant AuthController as AuthController
+    participant UserService as UserService
+    participant Redis as Redis
+    participant DB as MySQL
+
+    Client->>AuthController: POST /api/v1/auth/login
+    AuthController->>UserService: 验证用户名密码
+    UserService->>DB: 查询用户信息+角色权限
+    DB-->>UserService: User + Roles
+    UserService->>Redis: 存储 Token
+    Redis-->>UserService: Token 存储成功
+    UserService-->>AuthController: Token + UserInfo
+    AuthController-->>Client: { token, userInfo }
+
+    Note over Client,Redis: 后续请求携带 Token
+
+    Client->>JwtFilter: GET /api/v1/users
+    JwtFilter->>Redis: 验证 Token
+    alt Token 有效
+        Redis-->>JwtFilter: 用户信息
+        JwtFilter->>UserService: 放行请求
+        UserService-->>Client: 数据响应
+    else Token 无效/过期
+        JwtFilter-->>Client: 401 Unauthorized
+    end
+```
+
+### 4.3 数据库 ER 图（核心实体）
+
+```mermaid
+erDiagram
+    LOGIN_USER ||--o{ ACCOUNT_ROLE : "拥有"
+    LOGIN_USER ||--o{ SYS_LOGIN_LOG : "产生"
+    LOGIN_USER ||--o{ SYS_OPER_LOG : "执行"
+    SYS_ROLE ||--o{ ACCOUNT_ROLE : "包含用户"
+    SYS_ROLE ||--o{ SYS_ROLE_MENU : "拥有菜单"
+    SYS_MENU ||--o{ SYS_ROLE_MENU : "被分配"
+    SYS_DEPT ||--o{ LOGIN_USER : "隶属"
+
+    LOGIN_USER {
+        bigint id PK "用户ID(雪花算法)"
+        varchar username "用户名"
+        varchar password "密码"
+        varchar nickname "昵称"
+        varchar email "邮箱"
+        varchar phone "手机号"
+        int status "状态(0禁用/1正常)"
+        datetime create_time "创建时间"
+        datetime update_time "更新时间"
+    }
+
+    SYS_ROLE {
+        bigint id PK "角色ID"
+        varchar name "角色名称"
+        varchar code "角色编码"
+        varchar description "描述"
+        int status "状态"
+        datetime create_time "创建时间"
+    }
+
+    ACCOUNT_ROLE {
+        bigint id PK "主键"
+        bigint user_id FK "用户ID"
+        bigint role_id FK "角色ID"
+    }
+
+    SYS_MENU {
+        bigint id PK "菜单ID"
+        varchar name "菜单名称"
+        varchar path "路由路径"
+        varchar component "组件路径"
+        int type "类型(菜单/按钮)"
+        bigint parent_id "父菜单ID"
+        int sort "排序"
+    }
+
+    SYS_ROLE_MENU {
+        bigint id PK "主键"
+        bigint role_id FK "角色ID"
+        bigint menu_id FK "菜单ID"
+    }
+
+    SYS_DEPT {
+        bigint id PK "部门ID"
+        varchar name "部门名称"
+        bigint parent_id "父部门ID"
+        int sort "排序"
+        datetime create_time "创建时间"
+    }
+```
+
+---
+
+## 5. 数据库设计
+
+### 5.1 核心表（15张）
 
 | 表名 | 说明 |
 |------|------|
@@ -83,7 +253,7 @@ src/main/java/com/josp/system/
 | `sys_config` | 系统配置 |
 | `sys_file` | 文件记录表 |
 
-### 4.2 设计原则
+### 5.2 设计原则
 
 - **雪花ID主键**: 所有表使用 `IdType.ASSIGN_ID` 生成19位雪花ID
 - **无外键设计**: 不使用数据库外键约束，在业务层逻辑关联
@@ -92,9 +262,9 @@ src/main/java/com/josp/system/
 
 详细设计见 [db/database_design.md](db/database_design.md)
 
-## 5. API 路由
+## 6. API 路由
 
-### 5.1 核心管理模块
+### 6.1 核心管理模块
 
 | 模块 | 路径 | 说明 |
 |------|------|------|
@@ -105,7 +275,7 @@ src/main/java/com/josp/system/
 | 部门 | `/api/v1/dept/*` | 树形、选项、CRUD |
 | 字典 | `/api/v1/dict/*` | 类型CRUD、数据CRUD |
 
-### 5.2 系统运维模块
+### 6.2 系统运维模块
 
 | 模块 | 路径 | 说明 |
 |------|------|------|
@@ -115,7 +285,7 @@ src/main/java/com/josp/system/
 | 在线用户 | `/api/v1/online-users/*` | 分页、强制下线、Redis存储 |
 | 系统监控 | `/api/v1/monitor/*` | 服务器、数据库、Redis状态 |
 
-## 6. API 统一响应格式
+## 7. API 统一响应格式
 
 ```json
 {
@@ -134,7 +304,7 @@ src/main/java/com/josp/system/
 | 404 | 资源不存在 |
 | 500 | 服务器内部错误 |
 
-## 7. 认证流程
+## 8. 认证流程
 
 1. 用户登录 → AuthController.login()
 2. 验证用户名密码，查询用户信息和角色权限
@@ -143,21 +313,21 @@ src/main/java/com/josp/system/
 5. 后续请求带 Authorization Header
 6. JwtAuthenticationFilter 拦截验证 Token
 
-## 8. 权限控制
+## 9. 权限控制
 
 - 基于 Spring Security + JWT
 - 角色-菜单多对多关联
 - 按钮级权限标识（perm 字段）
 - Redis 存储在线用户会话
 
-## 9. 环境要求
+## 10. 环境要求
 
 - JDK 25
 - Maven 3.8+
 - MySQL 8.0+
 - Redis 6.0+
 
-## 10. 快速开始
+## 11. 快速开始
 
 ```bash
 # 编译
@@ -177,7 +347,7 @@ java -jar target/josp-system-1.0.0-SNAPSHOT.jar
 
 默认账号: admin / admin123
 
-## 11. 版本历史
+## 12. 版本历史
 
 | 版本 | 日期 | 变更说明 |
 |------|------|----------|

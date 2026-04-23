@@ -10,20 +10,49 @@ buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
 
-# Java
-*.class
+# Eclipse
+.classpath
+.project
+.settings/
+.metadata
+bin/
+.factorypath
+*~
 
-# Log files
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+_modules/
+.gen
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# VS Code
+.vscode/
+
+# Mac
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
 *.log
 logs/
 
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files
+# Package files
 *.jar
 *.war
 *.nar
@@ -34,33 +63,12 @@ logs/
 
 # Virtual machine crash logs
 hs_err_pid*
-.replay_pid*
+replay_pid*
 
-# IDE
-.idea/
-*.iml
-*.ipr
-*.iws
-.project
-.classpath
-.settings/
-.vscode/
-*.swp
-*.swo
-*~
+# Maven wrapper
+!.mvn/wrapper/maven-wrapper.jar
 
-# OS
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Spring Boot
-spring-shell.log
-
-# Test reports (don't commit test results)
-surefire-reports/
-failsafe-reports/
+# Application
+application-local.yml
+application-dev.yml
+*.local
