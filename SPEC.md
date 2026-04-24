@@ -13,7 +13,7 @@
 ## 2. 技术栈
 
 | 分类 | 技术 | 版本 |
-|------|------|------|
+|------|------|
 | 核心框架 | Spring Boot | 3.4.4 |
 | Java 版本 | OpenJDK | 25 |
 | ORM | MyBatis-Plus | 3.5.10.1 |
@@ -23,42 +23,98 @@
 | API 文档 | Knife4j | 4.5.0 |
 | 工具库 | Hutool | 5.8.28 |
 | JSON | FastJSON2 | 2.0.52 |
-| Excel 处理 | Apache POI | 5.4.0 |
-| 代码生成 | Lombok | 1.18.38 |
+| Excel 处理 | Apache POI | poi 5.2.5 / poi-ooxml 5.4.0 |
+| 代码生成 | Lombok | 1.18.40 |
 
 ## 3. 项目结构
 
 ```
 src/main/java/com/josp/system/
-├── controller/          # REST API 控制器
-│   ├── AuthController.java      # 认证（登录/登出/当前用户）
-│   ├── UserController.java      # 用户管理
-│   ├── RoleController.java      # 角色管理
-│   ├── MenuController.java      # 菜单管理
-│   ├── DeptController.java      # 部门管理
-│   ├── DictController.java      # 字典管理
-│   ├── LoginLogController.java  # 登录日志
-│   ├── OperLogController.java   # 操作日志
-│   ├── NoticeController.java    # 通知公告
-│   ├── OnlineUserController.java# 在线用户
-│   └── MonitorController.java   # 系统监控
-├── service/             # 业务逻辑层
-│   └── impl/            # Service 实现
-├── dao/                 # 数据访问层（Mapper）
-├── entity/              # 数据库实体
-├── dto/                 # 数据传输对象
-├── config/              # Spring 配置类
-├── security/
-│   ├── config/          # 安全配置（Spring Security）
-│   ├── filter/          # JWT 过滤器
-│   └── jwt/             # JWT 工具类
+├── JospSystemApplication.java     # 应用入口
+├── controller/                    # REST API 控制器
+│   ├── LoginController.java      # 认证（登录/登出/当前用户）
+│   ├── UserController.java       # 用户管理
+│   ├── RoleController.java       # 角色管理
+│   ├── MenuController.java       # 菜单管理
+│   ├── DeptController.java       # 部门管理
+│   ├── DictController.java       # 字典查询
+│   ├── DictManageController.java # 字典管理（类型/数据 CRUD）
+│   ├── LoginLogController.java   # 登录日志
+│   ├── OperLogController.java    # 操作日志
+│   ├── NoticeController.java     # 通知公告
+│   ├── OnlineUserController.java # 在线用户
+│   ├── MonitorController.java    # 系统监控
+│   ├── DashboardController.java  # 仪表盘统计
+│   └── DemoController.java       # 示例接口
+├── service/                      # 业务逻辑层
+│   ├── LoginUserService.java     # 用户服务
+│   ├── RoleService.java          # 角色服务
+│   ├── MenuService.java          # 菜单服务
+│   ├── DeptService.java          # 部门服务
+│   ├── DictService.java          # 字典查询服务
+│   ├── DictManageService.java    # 字典管理服务
+│   ├── LoginLogService.java      # 登录日志服务
+│   ├── OperLogService.java       # 操作日志服务
+│   ├── NoticeService.java        # 通知公告服务
+│   ├── OnlineUserService.java    # 在线用户服务
+│   ├── MonitorService.java       # 系统监控服务
+│   ├── UserDetailsServiceImpl.java # Spring Security 用户详情服务
+│   └── impl/                     # Service 实现
+│       ├── DeptServiceImpl.java
+│       ├── DictManageServiceImpl.java
+│       ├── DictServiceImpl.java
+│       ├── LoginLogServiceImpl.java
+│       ├── MenuServiceImpl.java
+│       ├── MonitorServiceImpl.java
+│       ├── NoticeServiceImpl.java
+│       ├── OnlineUserServiceImpl.java
+│       ├── OperLogServiceImpl.java
+│       └── RoleServiceImpl.java
+├── dao/                          # 数据访问层（Mapper）
+├── entity/                       # 数据库实体
+├── dto/                          # 数据传输对象
+├── config/                       # Spring 配置类
+│   ├── CorsConfig.java           # CORS 跨域配置
+│   ├── MyMetaObjectHandler.java  # 自动填充处理器
+│   ├── MybatisPlusConfig.java   # MyBatis-Plus 配置
+│   ├── RedisConfig.java          # Redis 配置
+│   └── SnowflakeIdGenerator.java # 雪花 ID 生成器
 └── common/
-    ├── annotation/      # 自定义注解（如 @OperLog）
-    ├── aspect/          # AOP 切面
-    ├── api/             # API 统一返回格式
-    ├── constant/        # 常量定义
-    ├── exception/       # 自定义异常
-    └── utils/           # 工具类（IP、导出等）
+    ├── annotation/
+    │   └── OperLog.java          # 操作日志注解
+    ├── aspect/
+    │   └── OperLogAspect.java    # 操作日志切面
+    ├── api/                      # API 统一返回格式
+    │   ├── Result.java
+    │   ├── ResultCode.java
+    │   ├── CommonResult.java
+    │   ├── PageResult.java
+    │   ├── UserInfo.java
+    │   ├── CaptchaResult.java
+    │   ├── ChartVO.java
+    │   ├── DashboardStatisticsVO.java
+    │   ├── DatabaseInfo.java
+    │   ├── MonitorVO.java
+    │   ├── RedisInfo.java
+    │   ├── ServerInfo.java
+    │   ├── Meta.java
+    │   └── RouteVO.java
+    ├── constant/
+    │   └── Constants.java        # 常量定义
+    ├── exception/
+    │   ├── BusinessException.java
+    │   └── GlobalExceptionHandler.java
+    └── utils/
+        ├── ExportUtils.java      # Excel 导出工具
+        ├── IpUtils.java          # IP 地址工具
+        └── PageUtils.java        # 分页工具
+├── security/
+│   ├── config/
+│   │   ├── AuthConfig.java      # 认证配置
+│   │   └── SecurityConfig.java  # Spring Security 配置
+│   └── jwt/
+│       ├── JwtAuthenticationFilter.java # JWT 过滤器
+│       └── JwtTokenUtil.java     # JWT 工具类
 ```
 
 ---
@@ -84,21 +140,23 @@ graph TB
     end
 
     subgraph Application["应用层"]
-        Auth["AuthController<br/>认证管理"]
+        Login["LoginController<br/>认证管理"]
         User["UserController<br/>用户管理"]
         Role["RoleController<br/>角色管理"]
         Menu["MenuController<br/>菜单管理"]
         Dept["DeptController<br/>部门管理"]
-        Dict["DictController<br/>字典管理"]
+        Dict["DictController<br/>字典查询"]
+        DictMng["DictManageController<br/>字典管理"]
         Log["OperLogController<br/>操作日志"]
         Monitor["MonitorController<br/>系统监控"]
+        Dashboard["DashboardController<br/>仪表盘"]
     end
 
     subgraph Service["服务层"]
-        UserService["UserService"]
-        RoleService["RoleService"]
-        MenuService["MenuService"]
-        DictService["DictService"]
+        UserSvc["LoginUserService"]
+        RoleSvc["RoleService"]
+        MenuSvc["MenuService"]
+        DictSvc["DictService"]
     end
 
     subgraph Data["数据层"]
@@ -110,26 +168,27 @@ graph TB
     Frontend --> JwtFilter
     JwtFilter --> Cors
     Cors --> SecurityConfig
-    SecurityConfig --> Auth
+    SecurityConfig --> Login
     SecurityConfig --> User
     SecurityConfig --> Role
     SecurityConfig --> Menu
     SecurityConfig --> Dept
     SecurityConfig --> Dict
+    SecurityConfig --> DictMng
     SecurityConfig --> Log
     SecurityConfig --> Monitor
-    Auth --> UserService
-    User --> UserService
-    Role --> RoleService
-    Menu --> MenuService
-    Dict --> DictService
-    UserService --> MyBatisPlus
-    RoleService --> MyBatisPlus
-    MenuService --> MyBatisPlus
-    DictService --> MyBatisPlus
+    Login --> UserSvc
+    User --> UserSvc
+    Role --> RoleSvc
+    Menu --> MenuSvc
+    Dict --> DictSvc
+    UserSvc --> MyBatisPlus
+    RoleSvc --> MyBatisPlus
+    MenuSvc --> MyBatisPlus
+    DictSvc --> MyBatisPlus
     MyBatisPlus --> MySQL
     SecurityConfig --> Redis
-    Auth --> Redis
+    Login --> Redis
 ```
 
 ### 4.2 JWT 认证流程
@@ -138,19 +197,19 @@ graph TB
 sequenceDiagram
     participant Client as 前端 Client
     participant JwtFilter as JwtAuthenticationFilter
-    participant AuthController as AuthController
-    participant UserService as UserService
+    participant LoginController as LoginController
+    participant LoginUserService as LoginUserService
     participant Redis as Redis
     participant DB as MySQL
 
-    Client->>AuthController: POST /api/v1/auth/login
-    AuthController->>UserService: 验证用户名密码
-    UserService->>DB: 查询用户信息+角色权限
-    DB-->>UserService: User + Roles
-    UserService->>Redis: 存储 Token
-    Redis-->>UserService: Token 存储成功
-    UserService-->>AuthController: Token + UserInfo
-    AuthController-->>Client: { token, userInfo }
+    Client->>LoginController: POST /api/v1/auth/login
+    LoginController->>LoginUserService: 验证用户名密码
+    LoginUserService->>DB: 查询用户信息+角色权限
+    DB-->>LoginUserService: User + Roles
+    LoginUserService->>Redis: 存储 Token
+    Redis-->>LoginUserService: Token 存储成功
+    LoginUserService-->>LoginController: Token + UserInfo
+    LoginController-->>Client: { token, userInfo }
 
     Note over Client,Redis: 后续请求携带 Token
 
@@ -158,8 +217,8 @@ sequenceDiagram
     JwtFilter->>Redis: 验证 Token
     alt Token 有效
         Redis-->>JwtFilter: 用户信息
-        JwtFilter->>UserService: 放行请求
-        UserService-->>Client: 数据响应
+        JwtFilter->>LoginUserService: 放行请求
+        LoginUserService-->>Client: 数据响应
     else Token 无效/过期
         JwtFilter-->>Client: 401 Unauthorized
     end
@@ -273,7 +332,8 @@ erDiagram
 | 角色 | `/api/v1/roles/*` | 分页、创建、更新、删除、分配菜单 |
 | 菜单 | `/api/v1/menus/*` | 树形、路由、选项、CRUD |
 | 部门 | `/api/v1/dept/*` | 树形、选项、CRUD |
-| 字典 | `/api/v1/dict/*` | 类型CRUD、数据CRUD |
+| 字典 | `/api/v1/dict/*` | 字典查询（标签/数据） |
+| 字典管理 | `/api/v1/dict/*` | 类型CRUD、数据CRUD |
 
 ### 6.2 系统运维模块
 
@@ -284,6 +344,13 @@ erDiagram
 | 通知公告 | `/api/v1/notices/*` | CRUD、发布、撤回、置顶 |
 | 在线用户 | `/api/v1/online-users/*` | 分页、强制下线、Redis存储 |
 | 系统监控 | `/api/v1/monitor/*` | 服务器、数据库、Redis状态 |
+
+### 6.3 辅助模块
+
+| 模块 | 路径 | 说明 |
+|------|------|------|
+| 仪表盘 | `/api/v1/dashboard/*` | 统计图表、销售/访问数据 |
+| 示例 | `/api/v1/demo/*` | 示例接口 |
 
 ## 7. API 统一响应格式
 
@@ -306,7 +373,7 @@ erDiagram
 
 ## 8. 认证流程
 
-1. 用户登录 → AuthController.login()
+1. 用户登录 → LoginController.login()
 2. 验证用户名密码，查询用户信息和角色权限
 3. 生成 JWT Token，存储到 Redis
 4. 返回 Token 和用户信息给前端
