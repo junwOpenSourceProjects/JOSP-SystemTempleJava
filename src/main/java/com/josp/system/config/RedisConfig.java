@@ -25,6 +25,7 @@ import java.time.Duration;
  */
 @Configuration
 @EnableCaching
+@Profile("!test")
 public class RedisConfig {
 
     private Jackson2JsonRedisSerializer<Object> createSerializer() {
