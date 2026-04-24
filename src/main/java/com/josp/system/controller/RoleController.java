@@ -13,14 +13,20 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Tag(name = "角色管理接口")
+/**
+ * Role Management Controller providing CRUD operations for system roles.
+ * Handles role pagination, creation, update, deletion and menu assignment.
+ *
+ * @author JOSP System
+ * @version 1.0
+ */
+@Tag(name = "Role Management")
 @RestController
 @RequestMapping("/api/v1/roles")
 @RequiredArgsConstructor
@@ -28,13 +34,22 @@ public class RoleController {
 
     private final RoleService roleService;
 
-    @Operation(summary = "获取角色分页列表")
+    /**
+     * Retrieves paginated role list with optional filtering.
+     *
+     * @param page    page number (default 1)
+     * @param limit   page size (default 10)
+     * @param keyword search keyword for name or code
+     * @param status  role status filter
+     * @return paginated role list
+     */
+    @Operation(summary = "Get role paginated list")
     @GetMapping("/page")
     public Result<PageResult<Map<String, Object>>> getRolePage(
-            @Parameter(description = "页码") @RequestParam(defaultValue = "1") Integer page,
-            @Parameter(description = "每页条数") @RequestParam(defaultValue = "10") Integer limit,
-            @Parameter(description = "关键词") @RequestParam(required = false) String keyword,
-            @Parameter(description = "状态") @RequestParam(required = false) Integer status
+            @Parameter(description = "Page number") @RequestParam(defaultValue = "1") Integer page,
+            @Parameter(description = "Page size") @RequestParam(defaultValue = "10") Integer limit,
+            @Parameter(description = "Keyword") @RequestParam(required = false) String keyword,
+            @Parameter(description = "Status") @RequestParam(required = false) Integer status
     ) {
         LambdaQueryWrapper<Role> wrapper = new LambdaQueryWrapper<>();
         if (keyword != null && !keyword.isEmpty()) {
@@ -64,7 +79,12 @@ public class RoleController {
         return Result.success(new PageResult<>(records, pageResult.getTotal()));
     }
 
-    @Operation(summary = "获取角色选项列表")
+    /**
+     * Gets role options for dropdown selection.
+     *
+     * @return list of enabled roles
+     */
+    @Operation(summary = "Get role options list")
     @GetMapping("/options")
     public Result<List<Map<String, Object>>> getRoleOptions() {
         LambdaQueryWrapper<Role> wrapper = new LambdaQueryWrapper<>();
@@ -82,33 +102,56 @@ public class RoleController {
         return Result.success(options);
     }
 
-    @Operation(summary = "获取所有角色列表")
+    /**
+     * Gets all roles without pagination.
+     *
+     * @return list of all roles
+     */
+    @Operation(summary = "Get all roles")
     @GetMapping
     public Result<List<Role>> listAllRoles() {
         List<Role> roles = roleService.listAllRoles();
         return Result.success(roles);
     }
 
-    @Operation(summary = "根据ID获取角色详情")
+    /**
+     * Gets role details by ID.
+     *
+     * @param id role ID
+     * @return role details
+     */
+    @Operation(summary = "Get role by ID")
     @GetMapping("/{id}")
     public Result<Role> getRoleById(@PathVariable Long id) {
         Role role = roleService.getRoleById(id);
         return Result.success(role);
     }
 
-    @Operation(summary = "获取角色的菜单ID列表")
+    /**
+     * Gets menu IDs assigned to a specific role.
+     *
+     * @param id role ID
+     * @return list of menu IDs
+     */
+    @Operation(summary = "Get role menu IDs")
     @GetMapping("/{id}/menuIds")
     public Result<List<Long>> getRoleMenuIds(@PathVariable Long id) {
         List<Long> menuIds = roleService.getMenuIdsByRoleId(id);
         return Result.success(menuIds);
     }
 
-    @Operation(summary = "获取角色表单数据")
+    /**
+     * Gets role form data including assigned menu IDs.
+     *
+     * @param id role ID
+     * @return role form data with menu IDs
+     */
+    @Operation(summary = "Get role form data")
     @GetMapping("/{id}/form")
     public Result<Map<String, Object>> getRoleFormData(@PathVariable Long id) {
         Role role = roleService.getById(id);
         if (role == null) {
-            return Result.failed("角色不存在");
+            return Result.failed("Role not found");
         }
         Map<String, Object> map = new HashMap<>();
         map.put("id", role.getId());
@@ -121,45 +164,77 @@ public class RoleController {
         return Result.success(map);
     }
 
-    @Operation(summary = "创建角色")
+    /**
+     * Creates a new role.
+     *
+     * @param roleDTO role data transfer object
+     * @return creation result
+     */
+    @Operation(summary = "Create role")
     @PostMapping
     public Result<Boolean> createRole(@Valid @RequestBody RoleDTO roleDTO) {
         boolean result = roleService.createRole(roleDTO);
-        return Result.success(result, "创建成功");
+        return Result.success(result, "Created successfully");
     }
 
-    @Operation(summary = "更新角色")
+    /**
+     * Updates an existing role.
+     *
+     * @param id      role ID
+     * @param roleDTO role data transfer object
+     * @return update result
+     */
+    @Operation(summary = "Update role")
     @PutMapping("/{id}")
     public Result<Boolean> updateRole(@PathVariable Long id, @Valid @RequestBody RoleDTO roleDTO) {
         roleDTO.setId(id);
         boolean result = roleService.updateRole(roleDTO);
-        return Result.success(result, "更新成功");
+        return Result.success(result, "Updated successfully");
     }
 
-    @Operation(summary = "删除角色")
+    /**
+     * Deletes a role by ID.
+     *
+     * @param id role ID
+     * @return deletion result
+     */
+    @Operation(summary = "Delete role")
     @DeleteMapping("/{id}")
     public Result<Boolean> deleteRole(@PathVariable Long id) {
         boolean result = roleService.deleteRole(id);
-        return Result.success(result, "删除成功");
+        return Result.success(result, "Deleted successfully");
     }
 
-    @Operation(summary = "批量删除角色")
+    /**
+     * Batch deletes multiple roles.
+     *
+     * @param ids comma-separated role IDs
+     * @return batch deletion result
+     */
+    @Operation(summary = "Batch delete roles")
     @DeleteMapping("/{ids}")
     public Result<Void> deleteRolesByIds(@PathVariable String ids) {
         if (ids == null || ids.isEmpty()) {
-            return Result.failed("请选择要删除的角色");
+            return Result.failed("Please select roles to delete");
         }
         String[] idArray = ids.split(",");
         for (String idStr : idArray) {
             roleService.deleteRole(Long.parseLong(idStr.trim()));
         }
-        return Result.success(null, "批量删除成功");
+        return Result.success(null, "Batch deleted successfully");
     }
 
-    @Operation(summary = "分配菜单权限给角色")
+    /**
+     * Assigns menu permissions to a role.
+     *
+     * @param id      role ID
+     * @param menuIds list of menu IDs to assign
+     * @return assignment result
+     */
+    @Operation(summary = "Assign menus to role")
     @PutMapping("/{id}/menus")
     public Result<Boolean> assignMenusToRole(@PathVariable Long id, @RequestBody List<Long> menuIds) {
         boolean result = roleService.assignMenus(id, menuIds);
-        return Result.success(result, "分配成功");
+        return Result.success(result, "Assigned successfully");
     }
 }

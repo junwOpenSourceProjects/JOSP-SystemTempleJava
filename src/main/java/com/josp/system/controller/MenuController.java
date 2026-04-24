@@ -19,7 +19,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Tag(name = "菜单接口")
+/**
+ * Menu Management Controller providing CRUD operations for system menus.
+ * Handles menu hierarchy, routing configuration, and permission management.
+ *
+ * @author JOSP System
+ * @version 1.0
+ */
+@Tag(name = "Menu Management")
 @RestController
 @RequestMapping("/api/v1/menus")
 @RequiredArgsConstructor
@@ -27,17 +34,29 @@ public class MenuController {
 
     private final MenuService menuService;
 
-    @Operation(summary = "获取路由列表")
+    /**
+     * Gets route configuration for a specific user.
+     *
+     * @param userId user ID
+     * @return list of route configurations
+     */
+    @Operation(summary = "Get user routes")
     @GetMapping("/routes")
     public Result<List<RouteVO>> getRoutes(@RequestParam Long userId) {
         List<RouteVO> routes = menuService.listRoutesByUserId(userId);
         return Result.success(routes);
     }
 
-    @Operation(summary = "获取菜单列表")
+    /**
+     * Gets menu list with optional type filter.
+     *
+     * @param type menu type filter (optional)
+     * @return list of menus
+     */
+    @Operation(summary = "Get menu list")
     @GetMapping
     public Result<List<Map<String, Object>>> getMenuList(
-            @Parameter(description = "菜单类型") @RequestParam(required = false) Integer type
+            @Parameter(description = "Menu type") @RequestParam(required = false) Integer type
     ) {
         LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
         if (type != null) {
@@ -69,7 +88,12 @@ public class MenuController {
         return Result.success(result);
     }
 
-    @Operation(summary = "获取菜单下拉选项")
+    /**
+     * Gets menu options for dropdown/tree selection.
+     *
+     * @return hierarchical menu options
+     */
+    @Operation(summary = "Get menu dropdown options")
     @GetMapping("/options")
     public Result<List<Map<String, Object>>> getMenuOptions() {
         List<Menu> menus = menuService.listAllMenus();
@@ -77,12 +101,18 @@ public class MenuController {
         return Result.success(options);
     }
 
-    @Operation(summary = "获取菜单表单数据")
+    /**
+     * Gets menu form data for editing.
+     *
+     * @param id menu ID
+     * @return menu form data
+     */
+    @Operation(summary = "Get menu form data")
     @GetMapping("/{id}/form")
     public Result<Map<String, Object>> getMenuFormData(@PathVariable Long id) {
         Menu menu = menuService.getById(id);
         if (menu == null) {
-            return Result.failed("菜单不存在");
+            return Result.failed("Menu not found");
         }
         Map<String, Object> map = new HashMap<>();
         map.put("id", menu.getId());
@@ -101,28 +131,54 @@ public class MenuController {
         return Result.success(map);
     }
 
-    @Operation(summary = "创建菜单")
+    /**
+     * Creates a new menu.
+     *
+     * @param menuDTO menu data transfer object
+     * @return creation result
+     */
+    @Operation(summary = "Create menu")
     @PostMapping
     public Result<Void> createMenu(@RequestBody MenuDTO menuDTO) {
         menuService.createMenu(menuDTO);
-        return Result.success(null, "创建成功");
+        return Result.success(null, "Created successfully");
     }
 
-    @Operation(summary = "更新菜单")
+    /**
+     * Updates an existing menu.
+     *
+     * @param id      menu ID
+     * @param menuDTO menu data transfer object
+     * @return update result
+     */
+    @Operation(summary = "Update menu")
     @PutMapping("/{id}")
     public Result<Void> updateMenu(@PathVariable Long id, @RequestBody MenuDTO menuDTO) {
         menuDTO.setId(id);
         menuService.updateMenu(menuDTO);
-        return Result.success(null, "更新成功");
+        return Result.success(null, "Updated successfully");
     }
 
-    @Operation(summary = "删除菜单")
+    /**
+     * Deletes a menu by ID.
+     *
+     * @param id menu ID
+     * @return deletion result
+     */
+    @Operation(summary = "Delete menu")
     @DeleteMapping("/{id}")
     public Result<Void> deleteMenu(@PathVariable Long id) {
         menuService.deleteMenu(id);
-        return Result.success(null, "删除成功");
+        return Result.success(null, "Deleted successfully");
     }
 
+    /**
+     * Builds hierarchical menu options recursively.
+     *
+     * @param menus   all menus
+     * @param parentId parent menu ID
+     * @return hierarchical options list
+     */
     private List<Map<String, Object>> buildMenuOptions(List<Menu> menus, Long parentId) {
         List<Map<String, Object>> result = new ArrayList<>();
         for (Menu menu : menus) {

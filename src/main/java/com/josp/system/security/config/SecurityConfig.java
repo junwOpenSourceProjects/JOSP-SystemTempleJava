@@ -16,12 +16,24 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
-import java.util.Collections;
-
+/**
+ * Spring Security configuration for the JOSP System.
+ * Configures HTTP security, JWT authentication filter, and endpoint authorization.
+ * 
+ * <p>This configuration:
+ * <ul>
+ *   <li>Disables CSRF protection (stateless API)</li>
+ *   <li>Configures stateless session management</li>
+ *   <li>Sets up JWT authentication filter</li>
+ *   <li>Defines public and protected endpoints</li>
+ * </ul>
+ *
+ * @author JOSP Team
+ * @version 1.0
+ * @since 2024-01-01
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -36,9 +48,27 @@ public class SecurityConfig {
     @Autowired
     private ApplicationContext applicationContext;
 
+    /**
+     * Creates and configures the SecurityFilterChain for HTTP requests.
+     * 
+     * <p>This method:
+     * <ul>
+     *   <li>Disables CSRF for stateless API</li>
+     *   <li>Configures CORS with default source</li>
+     *   <li>Sets stateless session policy</li>
+     *   <li>Configures endpoint authorization (permitAll for public endpoints)</li>
+     *   <li>Adds JWT authentication filter before UsernamePasswordAuthenticationFilter</li>
+     * </ul>
+     *
+     * @param http the HttpSecurity to configure
+     * @param jwtTokenUtil the JWT token utility (lazy to avoid circular dependency)
+     * @return the configured SecurityFilterChain
+     * @throws Exception if configuration fails
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, @Lazy JwtTokenUtil jwtTokenUtil) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
+            .cors(cors -> cors.configurationSource(new UrlBasedCorsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
@@ -66,7 +96,8 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             );
 
-        // 物理隔离方案：手动实例化过滤器，不交由 Spring Bean 容器生命周期管理，彻底打断初始化循环
+        // Physical isolation: manually instantiate the filter to break circular dependency during Spring Bean initialization.
+        // This filter is NOT managed by Spring Bean lifecycle, completely breaking the initialization loop.
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(
                 applicationContext,
                 jwtTokenUtil,
@@ -77,20 +108,5 @@ public class SecurityConfig {
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-    @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        // 设置允许跨域请求的源
-        config.setAllowedOriginPatterns(Collections.singletonList("*"));
-        // 设置允许请求头
-        config.setAllowedHeaders(Collections.singletonList("*"));
-        // 设置允许方法
-        config.setAllowedMethods(Collections.singletonList("*"));
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
     }
 }

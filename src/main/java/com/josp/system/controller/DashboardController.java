@@ -16,7 +16,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Tag(name = "首页看板")
+/**
+ * Dashboard / Home Page API Controller.
+ *
+ * <p>Provides statistical data for the admin dashboard overview:
+ * <ul>
+ *   <li>Stat cards (users, orders, revenue, visits)</li>
+ *   <li>Weekly visit trend (line chart)</li>
+ *   <li>Category sales ratio (pie chart)</li>
+ *   <li>Monthly sales vs. target (bar chart)</li>
+ * </ul>
+ *
+ * <p>All endpoints are public (no authentication required).
+ * Fallback mock data is returned when no database records exist.
+ *
+ * @author JOSP Team
+ * @version 1.0
+ * @since 2024-01-01
+ */
+@Tag(name = "Dashboard")
 @RestController
 @RequestMapping("/api/v1/dashboard")
 @RequiredArgsConstructor
@@ -27,6 +45,13 @@ public class DashboardController {
     private final CategorySalesMapper categorySalesMapper;
     private final MonthlySalesMapper monthlySalesMapper;
 
+    /**
+     * Returns the aggregate stat cards for the dashboard.
+     * When no database record exists, returns hardcoded fallback mock data.
+     * Growth rate is calculated as: (todayVisits - yesterdayVisits) / yesterdayVisits * 100.
+     *
+     * @return Result containing totalUsers, totalOrders, totalRevenue, todayVisits, yesterdayVisits, growthRate
+     */
     @Operation(summary = "获取统计卡片数据")
     @GetMapping("/stats")
     public Result<Map<String, Object>> getStats() {
@@ -41,7 +66,7 @@ public class DashboardController {
             data.put("totalRevenue", stats.getTotalRevenue());
             data.put("todayVisits", stats.getTodayVisits());
             data.put("yesterdayVisits", stats.getYesterdayVisits());
-            // 计算增长率
+            // Growth rate = (todayVisits - yesterdayVisits) / yesterdayVisits * 100
             if (stats.getYesterdayVisits() != null && stats.getYesterdayVisits() > 0) {
                 double rate = (stats.getTodayVisits() - stats.getYesterdayVisits()) * 100.0 / stats.getYesterdayVisits();
                 data.put("growthRate", Math.round(rate * 10) / 10.0);
@@ -49,7 +74,7 @@ public class DashboardController {
                 data.put("growthRate", 0);
             }
         } else {
-            // 无数据时返回默认值
+            // Fallback mock data when no DB record exists
             data.put("totalUsers", 10284);
             data.put("totalOrders", 3856);
             data.put("totalRevenue", new BigDecimal("1285600"));
@@ -60,6 +85,11 @@ public class DashboardController {
         return Result.success(data);
     }
 
+    /**
+     * Returns the 7-day visit and page-view trend for the line chart.
+     *
+     * @return Result containing xAxis (day names), visits (int array), pageViews (int array)
+     */
     @Operation(summary = "获取周访问趋势")
     @GetMapping("/weekly-visits")
     public Result<Map<String, Object>> getWeeklyVisits() {
@@ -72,6 +102,11 @@ public class DashboardController {
         return Result.success(data);
     }
 
+    /**
+     * Returns category-wise sales figures for the pie chart.
+     *
+     * @return Result containing categories (name array), values (int array)
+     */
     @Operation(summary = "获取分类占比")
     @GetMapping("/category-ratio")
     public Result<Map<String, Object>> getCategoryRatio() {
@@ -83,6 +118,12 @@ public class DashboardController {
         return Result.success(data);
     }
 
+    /**
+     * Returns monthly actual sales vs. targets for the bar chart.
+     * Data is filtered by yearVal = 2026.
+     *
+     * @return Result containing months (name array), sales (int array), target (int array)
+     */
     @Operation(summary = "获取月度销售趋势")
     @GetMapping("/monthly-sales")
     public Result<Map<String, Object>> getMonthlySales() {

@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,9 +28,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
-@Tag(name = "认证中心")
+/**
+ * Authentication Controller handling login, logout, captcha and user info operations.
+ * Provides endpoints for user authentication and current user information retrieval.
+ *
+ * @author JOSP System
+ * @version 1.0
+ */
+@Tag(name = "Authentication Center")
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
@@ -42,14 +50,26 @@ public class LoginController {
     private final JwtTokenUtil jwtTokenUtil;
     private final AccountRoleMapper accountRoleMapper;
     private final MenuMapper menuMapper;
+    private final StringRedisTemplate redisTemplate;
 
     @Value("${jwt.tokenHead}")
     private String tokenHead;
 
-    // 简易内存缓存，生产建议使用 Redis
-    private static final Map<String, String> captchaCache = new ConcurrentHashMap<>();
+    @Value("${jwt.expiration:7200}")
+    private Long expiration;
 
-    @Operation(summary = "获取验证码")
+    /**
+     * In-memory captcha cache for development.
+     * Production should use Redis.
+     */
+    private static final Map<String, String> captchaCache = new java.util.concurrent.ConcurrentHashMap<>();
+
+    /**
+     * Generates a captcha image for login verification.
+     *
+     * @return Result containing captcha key and base64 encoded image
+     */
+    @Operation(summary = "Get captcha")
     @GetMapping("/captcha")
     public Result<CaptchaResult> getCaptcha() {
         LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(116, 36);
@@ -67,52 +87,68 @@ public class LoginController {
         return Result.success(result);
     }
 
-    @Operation(summary = "登录")
+    /**
+     * Authenticates user credentials and returns JWT token.
+     * Note: Captcha verification is currently commented out for development.
+     *
+     * @param loginUser login request containing username and password
+     * @return Result containing JWT token and token head
+     */
+    @Operation(summary = "User login")
     @PostMapping("/login")
     public Result<Map<String, String>> login(@RequestBody LoginUser loginUser) {
         log.info("Login request for user: {}", loginUser.getUsername());
 
-        // 验证验证码 (开发环境暂时屏蔽)
+        // Verify captcha (currently disabled for development)
         /*
         String cachedCode = captchaCache.get(loginUser.getCaptchaKey());
         if (cachedCode == null || !cachedCode.equalsIgnoreCase(loginUser.getCaptchaCode())) {
-            return Result.failed("验证码错误或已失效");
+            return Result.failed("Captcha error or expired");
         }
         captchaCache.remove(loginUser.getCaptchaKey());
         */
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginUser.getUsername());
         if (!passwordEncoder.matches(loginUser.getPassword(), userDetails.getPassword())) {
-            return Result.failed("密码错误");
+            return Result.failed("Incorrect password");
         }
         
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
         
         String token = jwtTokenUtil.generateToken(userDetails);
+        
+        // Store token in Redis for logout support
+        redisTemplate.opsForValue().set("login_tokens:" + loginUser.getUsername(), token, expiration, TimeUnit.SECONDS);
+        
         Map<String, String> tokenMap = new HashMap<>();
         tokenMap.put("token", token);
         tokenMap.put("tokenHead", tokenHead);
         return Result.success(tokenMap);
     }
 
-    @Operation(summary = "获取当前登录用户信息")
+    /**
+     * Retrieves current authenticated user's information.
+     *
+     * @return Result containing user info including roles and permissions
+     */
+    @Operation(summary = "Get current user info")
     @GetMapping("/me")
     public Result<UserInfo> getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         LoginUser user = loginUserService.getByUsername(username);
 
         if (user == null) {
-            return Result.failed("用户不存在");
+            return Result.failed("User not found");
         }
 
-        // 从数据库获取用户角色列表
+        // Get user roles from database
         List<String> roles = accountRoleMapper.selectRoleCodesByUserId(user.getId());
         if (roles == null || roles.isEmpty()) {
             roles = Collections.singletonList("USER");
         }
 
-        // 从数据库获取用户权限标识列表（按钮权限）
+        // Get user permission identifiers from database (button permissions)
         List<String> perms = menuMapper.selectMenuPermsByUserId(user.getId());
         if (perms == null || perms.isEmpty()) {
             perms = Collections.singletonList("*:*:*");
@@ -130,9 +166,22 @@ public class LoginController {
         return Result.success(userInfo);
     }
 
-    @Operation(summary = "注销")
+    /**
+     * Logs out the current user by clearing security context and removing token from Redis.
+     *
+     * @return Result indicating successful logout
+     */
+    @Operation(summary = "User logout")
     @PostMapping("/logout")
     public Result<String> logout() {
-        return Result.success(null);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        
+        // Clear token from Redis
+        redisTemplate.delete("login_tokens:" + username);
+        
+        // Clear security context
+        SecurityContextHolder.clearContext();
+        
+        return Result.success(null, "Logout successful");
     }
 }

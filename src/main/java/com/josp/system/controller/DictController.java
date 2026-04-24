@@ -13,9 +13,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 字典控制器
+ * Dictionary Controller providing read-only endpoints for dictionary data.
+ * Used by frontend to fetch dictionary types and data for dropdowns and displays.
+ *
+ * @author JOSP System
+ * @version 1.0
  */
-@Tag(name = "字典接口")
+@Tag(name = "Dictionary Data")
 @RestController
 @RequestMapping("/api/v1/dict")
 @RequiredArgsConstructor
@@ -23,25 +27,47 @@ public class DictController {
 
     private final DictService dictService;
 
-    @Operation(summary = "获取所有字典类型")
+    /**
+     * Gets all dictionary types.
+     *
+     * @return list of all dictionary types
+     */
+    @Operation(summary = "Get all dictionary types")
     @GetMapping("/types")
     public Result<List<DictType>> getAllDictTypes() {
         return Result.success(dictService.listAllDictTypes());
     }
 
-    @Operation(summary = "根据字典编码获取字典数据")
+    /**
+     * Gets dictionary data by dictionary code.
+     *
+     * @param dictCode dictionary type code
+     * @return list of dictionary data items
+     */
+    @Operation(summary = "Get dictionary data by code")
     @GetMapping("/data/{dictCode}")
     public Result<List<DictData>> getDictDataByCode(@PathVariable String dictCode) {
         return Result.success(dictService.getDictDataByCode(dictCode));
     }
 
-    @Operation(summary = "根据字典类型ID获取字典数据")
+    /**
+     * Gets dictionary data by dictionary type ID.
+     *
+     * @param dictTypeId dictionary type ID
+     * @return list of dictionary data items
+     */
+    @Operation(summary = "Get dictionary data by type ID")
     @GetMapping("/data/type/{dictTypeId}")
     public Result<List<DictData>> getDictDataByTypeId(@PathVariable Long dictTypeId) {
         return Result.success(dictService.getDictDataByTypeId(dictTypeId));
     }
 
-    @Operation(summary = "获取所有字典数据（按类型分组）")
+    /**
+     * Gets all dictionary data grouped by dictionary type.
+     *
+     * @return map of dictionary code to list of dictionary data
+     */
+    @Operation(summary = "Get all dictionary data grouped")
     @GetMapping("/data/all")
     public Result<Map<String, List<DictData>>> getAllDictData() {
         return Result.success(dictService.getAllDictDataGrouped());

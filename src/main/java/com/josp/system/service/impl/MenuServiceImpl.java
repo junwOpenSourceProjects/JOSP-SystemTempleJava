@@ -18,6 +18,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * Menu Service Implementation.
+ *
+ * <p>Handles CRUD operations for system menus and builds
+ * hierarchical tree structures for both back-end and front-end consumption.
+ *
+ * @author JOSP Team
+ * @version 1.0
+ * @since 2024-01-01
+ */
 @Service
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
 
@@ -98,6 +108,13 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         return menus != null ? menus : new ArrayList<>();
     }
 
+    /**
+     * Builds a Menu entity tree for the admin tree-select component.
+     *
+     * @param menus   the flat list of all menus
+     * @param parentId the parent ID to filter on (0 = root)
+     * @return list of Menu records under the given parent (not mutated)
+     */
     private List<Menu> buildMenuTree(List<Menu> menus, Long parentId) {
         if (CollectionUtils.isEmpty(menus)) {
             return new ArrayList<>();
@@ -116,6 +133,14 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Builds a Vue Router route tree for dynamic route injection on the front-end.
+     * Recursively converts Menu entities into RouteVO objects including Meta.
+     *
+     * @param menus   the flat list of all menus visible to this user
+     * @param parentId the parent ID to filter on (0 = root)
+     * @return list of RouteVO records under the given parent
+     */
     private List<RouteVO> buildRouteTree(List<Menu> menus, Long parentId) {
         if (CollectionUtils.isEmpty(menus)) {
             return new ArrayList<>();
@@ -149,6 +174,13 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Converts a MenuDTO into a Menu entity for save/update operations.
+     * Applies sensible defaults for nullable fields.
+     *
+     * @param dto the incoming DTO from the controller
+     * @return a Menu entity ready to be persisted (ID is not set here)
+     */
     private Menu convertToEntity(MenuDTO dto) {
         Menu menu = new Menu();
         menu.setParentId(dto.getParentId() != null ? dto.getParentId() : 0L);

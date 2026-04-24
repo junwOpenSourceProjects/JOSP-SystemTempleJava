@@ -7,37 +7,59 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 /**
- * 跨域配置
+ * CORS (Cross-Origin Resource Sharing) Configuration.
+ *
+ * <p>Configures cross-origin HTTP requests for the JOSP System.
+ * Allows the Vue3 frontend (running on a different origin) to make API requests
+ * to this backend server with proper credential handling.
+ *
+ * <p>Key settings:
+ * <ul>
+ *   <li>Allow all origin patterns (configure specific origins in production)</li>
+ *   <li>Allow credentials (cookies, authorization headers)</li>
+ *   <li>Expose Authorization header so the frontend can read JWT tokens</li>
+ *   <li>Cache preflight (OPTIONS) responses for 1 hour</li>
+ * </ul>
+ *
+ * @author JOSP Team
+ * @version 1.0
+ * @since 2024-01-01
  */
 @Configuration
 public class CorsConfig {
 
+    /**
+     * Creates a CorsFilter bean that intercepts all requests and applies CORS headers.
+     *
+     * @return a configured CorsFilter instance
+     */
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        
-        // 允许的来源域名
+
+        // Allow all origins (use specific patterns in production, e.g. "https://yourdomain.com")
         config.addAllowedOriginPattern("*");
-        
-        // 允许携带认证信息
+
+        // Allow credentials (cookies, Authorization header, etc.)
         config.setAllowCredentials(true);
-        
-        // 允许的请求头
+
+        // Allow all request headers
         config.addAllowedHeader("*");
-        
-        // 允许的请求方法
+
+        // Allow all HTTP methods
         config.addAllowedMethod("*");
-        
-        // 暴露的响应头
+
+        // Expose Authorization header to the client so it can read the JWT from response
         config.addExposedHeader("Authorization");
         config.addExposedHeader("Content-Disposition");
-        
-        // 预检请求缓存时间
+
+        // Cache preflight (OPTIONS) response for 3600 seconds (1 hour)
+        // Reduces OPTIONS preflight requests for the same URL
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-        
+
         return new CorsFilter(source);
     }
 }

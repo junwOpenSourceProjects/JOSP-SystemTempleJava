@@ -15,105 +15,160 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 /**
- * 全局异常处理器
+ * Global exception handler for the JOSP System.
+ * Handles various exceptions thrown by controllers and services.
+ * 
+ * <p>This handler provides consistent error responses for:
+ * <ul>
+ *   <li>BusinessException - application-specific business logic errors</li>
+ *   <li>AuthenticationException - login/credential errors</li>
+ *   <li>AccessDeniedException - authorization failures</li>
+ *   <li>Validation exceptions - method argument validation failures</li>
+ *   <li>Binding exceptions - request parameter binding failures</li>
+ *   <li>General system exceptions - unexpected errors</li>
+ * </ul>
+ *
+ * @author JOSP Team
+ * @version 1.0
+ * @since 2024-01-01
  */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     /**
-     * 处理业务异常
+     * Handles BusinessException thrown by application services.
+     *
+     * @param e the business exception
+     * @param request the HTTP request for logging context
+     * @return CommonResult with the business error code and message
      */
     @ExceptionHandler(BusinessException.class)
     public CommonResult<Void> handleBusinessException(BusinessException e, HttpServletRequest request) {
-        log.warn("业务异常 [{}]: {}", request.getRequestURI(), e.getMessage());
+        log.warn("Business exception [{}]: {}", request.getRequestURI(), e.getMessage());
         return CommonResult.failed(e.getCode(), e.getMessage());
     }
 
     /**
-     * 处理系统未知异常
+     * Handles general Exception thrown by the system.
+     *
+     * @param e the exception
+     * @param request the HTTP request for logging context
+     * @return CommonResult with system error code
      */
     @ExceptionHandler(Exception.class)
     public CommonResult<String> handleException(Exception e, HttpServletRequest request) {
-        log.error("系统异常 [{}]: ", request.getRequestURI(), e);
+        log.error("System exception [{}]: ", request.getRequestURI(), e);
         return CommonResult.failed(ResultCode.ERROR);
     }
 
     /**
-     * 处理访问权限异常
+     * Handles Spring Security AccessDeniedException.
+     *
+     * @param e the access denied exception
+     * @param request the HTTP request for logging context
+     * @return CommonResult with forbidden status
      */
     @ExceptionHandler(AccessDeniedException.class)
     public CommonResult<Void> handleAccessDeniedException(AccessDeniedException e, HttpServletRequest request) {
-        log.warn("权限不足 [{}]: {}", request.getRequestURI(), e.getMessage());
+        log.warn("Access denied [{}]: {}", request.getRequestURI(), e.getMessage());
         return CommonResult.forbidden(ResultCode.FORBIDDEN.getMessage());
     }
 
     /**
-     * 处理认证异常
+     * Handles Spring Security AuthenticationException (includes DisabledException).
+     *
+     * @param e the authentication exception
+     * @param request the HTTP request for logging context
+     * @return CommonResult with unauthorized status
      */
     @ExceptionHandler(AuthenticationException.class)
     public CommonResult<Void> handleAuthenticationException(AuthenticationException e, HttpServletRequest request) {
-        log.warn("认证失败 [{}]: {}", request.getRequestURI(), e.getMessage());
+        log.warn("Authentication failed [{}]: {}", request.getRequestURI(), e.getMessage());
         return CommonResult.unauthorized(ResultCode.UNAUTHORIZED.getMessage());
     }
 
     /**
-     * 处理参数校验异常
+     * Handles @Valid validation exceptions from request body.
+     *
+     * @param e the method argument not valid exception
+     * @param request the HTTP request for logging context
+     * @return CommonResult with validation failed status
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public CommonResult<Void> handleValidationException(MethodArgumentNotValidException e, HttpServletRequest request) {
         String message = e.getBindingResult().getFieldError() != null ?
-            e.getBindingResult().getFieldError().getDefaultMessage() : "参数校验失败";
-        log.warn("参数校验失败 [{}]: {}", request.getRequestURI(), message);
+            e.getBindingResult().getFieldError().getDefaultMessage() : "Validation failed";
+        log.warn("Validation failed [{}]: {}", request.getRequestURI(), message);
         return CommonResult.validateFailed(message);
     }
 
     /**
-     * 处理绑定异常
+     * Handles request parameter binding exceptions.
+     *
+     * @param e the bind exception
+     * @param request the HTTP request for logging context
+     * @return CommonResult with validation failed status
      */
     @ExceptionHandler(BindException.class)
     public CommonResult<Void> handleBindException(BindException e, HttpServletRequest request) {
         String message = e.getFieldError() != null ?
-            e.getFieldError().getDefaultMessage() : "参数绑定失败";
-        log.warn("参数绑定失败 [{}]: {}", request.getRequestURI(), message);
+            e.getFieldError().getDefaultMessage() : "Parameter binding failed";
+        log.warn("Binding failed [{}]: {}", request.getRequestURI(), message);
         return CommonResult.validateFailed(message);
     }
 
     /**
-     * 处理请求参数缺失异常
+     * Handles missing required request parameter exceptions.
+     *
+     * @param e the missing servlet request parameter exception
+     * @param request the HTTP request for logging context
+     * @return CommonResult with validation failed status
      */
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public CommonResult<Void> handleMissingServletRequestParameterException(
             MissingServletRequestParameterException e, HttpServletRequest request) {
-        log.warn("请求参数缺失 [{}]: {}", request.getRequestURI(), e.getMessage());
-        return CommonResult.validateFailed("请求参数 [" + e.getParameterName() + "] 不能为空");
+        log.warn("Missing parameter [{}]: {}", request.getRequestURI(), e.getMessage());
+        return CommonResult.validateFailed("Required parameter [" + e.getParameterName() + "] cannot be empty");
     }
 
     /**
-     * 处理参数类型不匹配异常
+     * Handles type mismatch exceptions for method arguments.
+     *
+     * @param e the method argument type mismatch exception
+     * @param request the HTTP request for logging context
+     * @return CommonResult with validation failed status
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public CommonResult<Void> handleMethodArgumentTypeMismatchException(
             MethodArgumentTypeMismatchException e, HttpServletRequest request) {
-        log.warn("参数类型不匹配 [{}]: {}", request.getRequestURI(), e.getMessage());
-        return CommonResult.validateFailed("参数 [" + e.getName() + "] 类型错误");
+        log.warn("Type mismatch [{}]: {}", request.getRequestURI(), e.getMessage());
+        return CommonResult.validateFailed("Parameter [" + e.getName() + "] has invalid type");
     }
 
     /**
-     * 处理404异常
+     * Handles 404 NoHandlerFoundException.
+     *
+     * @param e the no handler found exception
+     * @param request the HTTP request for logging context
+     * @return CommonResult with 404 status
      */
     @ExceptionHandler(NoHandlerFoundException.class)
     public CommonResult<Void> handleNoHandlerFoundException(NoHandlerFoundException e, HttpServletRequest request) {
-        log.warn("资源不存在 [{}]: {}", request.getRequestURI(), e.getMessage());
-        return CommonResult.failed(404, "资源不存在");
+        log.warn("Resource not found [{}]: {}", request.getRequestURI(), e.getMessage());
+        return CommonResult.failed(404, "Resource not found");
     }
 
     /**
-     * 处理非法参数异常
+     * Handles IllegalArgumentException.
+     *
+     * @param e the illegal argument exception
+     * @param request the HTTP request for logging context
+     * @return CommonResult with validation failed status
      */
     @ExceptionHandler(IllegalArgumentException.class)
     public CommonResult<Void> handleIllegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
-        log.warn("非法参数 [{}]: {}", request.getRequestURI(), e.getMessage());
+        log.warn("Invalid argument [{}]: {}", request.getRequestURI(), e.getMessage());
         return CommonResult.validateFailed(e.getMessage());
     }
 }

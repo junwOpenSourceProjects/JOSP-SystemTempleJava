@@ -15,6 +15,16 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Role Service Implementation.
+ *
+ * <p>Handles CRUD operations for system roles and manages
+ * the role-to-menu permission assignments via {@code sys_role_menu}.
+ *
+ * @author JOSP Team
+ * @version 1.0
+ * @since 2024-01-01
+ */
 @Service
 @RequiredArgsConstructor
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements RoleService {
@@ -133,6 +143,14 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         return true;
     }
 
+    /**
+     * Checks whether a role code already exists, optionally excluding a given role ID
+     * (used to allow updating a role to its own code without triggering a duplicate error).
+     *
+     * @param code      the role code to check
+     * @param excludeId role ID to ignore (pass null to check all records)
+     * @return true if the code already exists in another role
+     */
     private boolean isCodeExists(String code, Long excludeId) {
         if (!StringUtils.hasText(code)) {
             return false;
