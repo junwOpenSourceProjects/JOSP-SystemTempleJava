@@ -6,8 +6,8 @@
 -- ============================================
 
 -- 创建数据库(如果不存在)
--- CREATE DATABASE IF NOT EXISTS josp_system DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
--- USE josp_system;
+#  CREATE DATABASE IF NOT EXISTS josp_system DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+#  USE josp_system;
 
 -- ============================================
 -- 雪花ID生成器（MySQL函数实现）
@@ -292,7 +292,7 @@ DROP TABLE IF EXISTS `sys_config`;
 CREATE TABLE `sys_config` (
     `id` BIGINT(19) NOT NULL COMMENT '主键，雪花ID',
     `name` VARCHAR(100) NOT NULL COMMENT '配置名称',
-    `key` VARCHAR(100) NOT NULL COMMENT '配置键',
+    `config_key` VARCHAR(100) NOT NULL COMMENT '配置键',
     `value` VARCHAR(500) DEFAULT NULL COMMENT '配置值',
     `type` VARCHAR(20) NOT NULL DEFAULT 'string' COMMENT '配置类型：string, number, boolean, json',
     `status` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '状态：0-禁用，1-正常',
