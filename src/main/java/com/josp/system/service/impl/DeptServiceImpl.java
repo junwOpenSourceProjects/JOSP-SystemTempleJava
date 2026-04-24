@@ -1,7 +1,10 @@
 package com.josp.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.josp.system.common.api.PageResult;
 import com.josp.system.dao.DeptMapper;
 import com.josp.system.entity.Dept;
 import com.josp.system.service.DeptService;
@@ -10,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -83,6 +88,40 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     public List<Dept> getDeptTreeSelect() {
         List<Dept> allDepts = listAllDepts();
         return buildDeptTree(allDepts, 0L);
+    }
+
+    @Override
+    public PageResult<Map<String, Object>> getDeptPage(Integer page, Integer limit, String name, Integer status) {
+        Page<Dept> pageParam = new Page<>(page, limit);
+        LambdaQueryWrapper<Dept> wrapper = new LambdaQueryWrapper<>();
+        if (name != null && !name.isEmpty()) {
+            wrapper.like(Dept::getName, name);
+        }
+        if (status != null) {
+            wrapper.eq(Dept::getStatus, status);
+        }
+        wrapper.orderByAsc(Dept::getSort).orderByDesc(Dept::getCreateTime);
+
+        IPage<Dept> result = page(pageParam, wrapper);
+
+        List<Map<String, Object>> records = result.getRecords().stream()
+                .map(dept -> {
+                    Map<String, Object> map = new LinkedHashMap<>();
+                    map.put("id", dept.getId());
+                    map.put("parentId", dept.getParentId());
+                    map.put("name", dept.getName());
+                    map.put("sort", dept.getSort());
+                    map.put("status", dept.getStatus());
+                    map.put("leader", dept.getLeader());
+                    map.put("phone", dept.getPhone());
+                    map.put("email", dept.getEmail());
+                    map.put("createTime", dept.getCreateTime());
+                    map.put("updateTime", dept.getUpdateTime());
+                    return map;
+                })
+                .collect(Collectors.toList());
+
+        return new PageResult<>(records, result.getTotal());
     }
 
     /**

@@ -59,6 +59,17 @@ public class DeptController {
         return Result.success(result);
     }
 
+    @Operation(summary = "Get department paginated list")
+    @GetMapping("/page")
+    public Result<com.josp.system.common.api.PageResult<Map<String, Object>>> getDeptPage(
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "10") Integer limit,
+            @Parameter(description = "Department name") @RequestParam(required = false) String name,
+            @Parameter(description = "Status") @RequestParam(required = false) Integer status
+    ) {
+        return Result.success(deptService.getDeptPage(page, limit, name, status));
+    }
+
     /**
      * Gets department tree structure.
      *

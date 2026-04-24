@@ -1,9 +1,11 @@
 package com.josp.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.josp.system.common.api.PageResult;
 import com.josp.system.entity.Dept;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 部门服务接口
@@ -44,4 +46,9 @@ public interface DeptService extends IService<Dept> {
      * 获取部门树（用于前端选择）
      */
     List<Dept> getDeptTreeSelect();
+
+    /**
+     * 分页查询部门列表
+     */
+    PageResult<Map<String, Object>> getDeptPage(Integer page, Integer limit, String name, Integer status);
 }
