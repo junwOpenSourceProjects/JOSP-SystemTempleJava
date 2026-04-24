@@ -9,6 +9,7 @@ import com.josp.system.dao.LoginUserMapper;
 import com.josp.system.entity.AccountRole;
 import com.josp.system.entity.LoginUser;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,10 +61,17 @@ public class LoginUserService extends ServiceImpl<LoginUserMapper, LoginUser> {
     }
 
     /**
+     * 批量插入（XML中用 #{list} 引用）
+     */
+    public int batchInsertWithParam(List<LoginUser> list) {
+        return baseMapper.batchInsert(list);
+    }
+
+    /**
      * 插入或更新
      */
-    public boolean insertOrUpdate(LoginUser record) {
-        return baseMapper.insertOrUpdate(record);
+    public int insertOrUpdate(LoginUser record) {
+        return baseMapper.insertOrUpdate(record) ? 1 : 0;
     }
 
     /**

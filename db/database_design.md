@@ -6,10 +6,33 @@
 2. **无外键设计**: 不使用数据库外键约束，在业务层逻辑关联
 3. **逻辑删除**: 状态字段代替物理删除
 4. **统一审计字段**: create_time, update_time, create_user, update_user
+5. **字符集**: 所有表使用 utf8mb4 字符集，排序规则 utf8mb4_unicode_ci
 
 ---
 
-## 二、实体关系图 (ER Diagram)
+## 二、数据表清单
+
+| 序号 | 表名 | 说明 |
+|------|------|------|
+| 1 | login_user | 登录用户表 |
+| 2 | sys_role | 角色表 |
+| 3 | account_role | 用户角色关联表 |
+| 4 | sys_role_menu | 角色菜单关联表 |
+| 5 | sys_menu | 菜单表 |
+| 6 | sys_dept | 部门表 |
+| 7 | sys_dict_type | 字典类型表 |
+| 8 | sys_dict_data | 字典数据表 |
+| 9 | sys_post | 岗位表 |
+| 10 | sys_oper_log | 操作日志表 |
+| 11 | sys_login_log | 登录日志表 |
+| 12 | sys_notice | 通知公告表 |
+| 13 | sys_config | 系统配置表 |
+| 14 | sys_file | 文件管理表 |
+| 15 | sys_online_user | 在线用户表 |
+
+---
+
+## 三、实体关系图 (ER Diagram)
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -17,53 +40,94 @@
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
 │  ┌──────────────┐       ┌────────────────┐       ┌──────────────┐         │
-│  │  login_user  │       │  account_role  │       │     role     │         │
+│  │  login_user  │       │  account_role  │       │   sys_role   │         │
 │  ├──────────────┤       ├────────────────┤       ├──────────────┤         │
 │  │ id (PK)      │       │ id (PK)        │       │ id (PK)      │         │
-│  │ username     │───────│ user_id (idx)  │───────│ id (FK)      │         │
+│  │ username     │───────│ user_id (idx)  │───────│ role_id (FK) │         │
 │  │ password     │       │ role_id (idx)  │       │ name         │         │
-│  │ name         │       │ introduction   │       │ code         │         │
-│  │ phone        │       │ avatar          │       │ sort         │         │
-│  │ sex          │       │ name           │       │ status       │         │
-│  │ id_number    │       └────────────────┘       │ create_time   │         │
-│  │ status       │              │                │ update_time   │         │
-│  │ create_time  │              │                └──────────────┘         │
-│  │ update_time  │              │                                              │
-│  │ create_user  │              │                                              │
-│  │ update_user  │              │                                              │
-│  └──────────────┘              │                                              │
-│          │                     │                                              │
-│          │    ┌────────────────┘                                              │
-│          │    │                                                              │
-│          ▼    ▼                                                              │
-│  ┌──────────────┐       ┌──────────────┐       ┌──────────────────┐         │
-│  │    menu      │       │  dict_type   │       │    dict_data     │         │
-│  ├──────────────┤       ├──────────────┤       ├──────────────────┤         │
-│  │ id (PK)      │       │ id (PK)      │       │ id (PK)          │         │
-│  │ parent_id    │       │ name         │       │ dict_type_id(idx) │         │
-│  │ name         │       │ code         │───────│ label            │         │
-│  │ type         │       │ status       │       │ value            │         │
-│  │ path         │       │ create_time  │       │ sort             │         │
-│  │ component    │       │ update_time  │       │ status           │         │
-│  │ icon         │       └──────────────┘       │ create_time      │         │
-│  │ sort         │                              │ update_time      │         │
-│  │ visible      │                              └──────────────────┘         │
-│  │ redirect     │                                                             │
-│  │ perm         │                                                             │
-│  │ keep_alive   │                                                             │
-│  │ always_show  │                                                             │
-│  │ create_time  │                                                             │
-│  │ update_time  │                                                             │
-│  └──────────────┘                                                             │
+│  │ name         │       └────────────────┘       │ code         │         │
+│  │ phone        │              │                │ sort         │         │
+│  │ sex          │              │                │ status       │         │
+│  │ id_number    │              │                └──────────────┘         │
+│  │ status       │              │                         ▲                 │
+│  └──────────────┘              │                         │                 │
+│          │                    │                ┌───────┴───────┐         │
+│          │                    │                │ sys_role_menu  │         │
+│          │                    │                ├───────────────┤         │
+│          │                    │                │ id (PK)       │         │
+│          │                    │                │ role_id (idx) │         │
+│          │                    │                │ menu_id (idx) │         │
+│          ▼                    ▼                └───────────────┘         │
+│  ┌──────────────┐       ┌──────────────┐                │                 │
+│  │    menu      │       │   sys_dept   │                │                 │
+│  ├──────────────┤       ├──────────────┤                │                 │
+│  │ id (PK)      │       │ id (PK)      │                ▼                 │
+│  │ parent_id    │       │ parent_id    │         ┌──────────────┐         │
+│  │ name         │       │ name         │         │   sys_menu   │         │
+│  │ type         │       │ code         │         ├──────────────┤         │
+│  │ path         │       │ leader       │         │ id (PK)      │         │
+│  │ component    │       │ phone        │         │ parent_id    │         │
+│  │ icon         │       │ status       │         │ name         │         │
+│  │ sort         │       └──────────────┘         │ type         │         │
+│  │ visible      │                              │ path         │         │
+│  │ perm         │                              │ component    │         │
+│  └──────────────┘                              │ icon         │         │
+│                                                  └──────────────┘         │
+│  ┌──────────────┐       ┌──────────────────┐                               │
+│  │  sys_config  │       │   sys_dict_type  │───────┐                     │
+│  ├──────────────┤       ├──────────────────┤       │                     │
+│  │ id (PK)      │       │ id (PK)          │       ▼                     │
+│  │ name         │       │ name             │ ┌──────────────┐              │
+│  │ key          │       │ code             │ │ sys_dict_data│              │
+│  │ value        │       │ status           │ ├──────────────┤              │
+│  │ type         │       └──────────────────┘ │ id (PK)      │              │
+│  │ status       │                          │ dict_type_id │              │
+│  └──────────────┘                          │ label        │              │
+│                                            │ value        │              │
+│  ┌──────────────┐       ┌──────────────┐    │ sort         │              │
+│  │   sys_post   │       │ sys_oper_log │    │ status       │              │
+│  ├──────────────┤       ├──────────────┤    └──────────────┘              │
+│  │ id (PK)      │       │ id (PK)      │                                │
+│  │ name         │       │ title        │    ┌──────────────┐              │
+│  │ code         │       │ business_type│    │ sys_notice   │              │
+│  │ sort         │       │ method       │    ├──────────────┤              │
+│  │ status       │       │ oper_id      │    │ id (PK)      │              │
+│  └──────────────┘       │ oper_name    │    │ title        │              │
+│                        │ oper_url     │    │ content      │              │
+│  ┌──────────────┐       │ oper_ip      │    │ type         │              │
+│  │ sys_login_log│       │ status       │    │ status       │              │
+│  ├──────────────┤       │ oper_time    │    └──────────────┘              │
+│  │ id (PK)      │       └──────────────┘                                  │
+│  │ user_id      │                                                         │
+│  │ username     │       ┌──────────────┐                                    │
+│  │ ip           │       │  sys_file    │                                    │
+│  │ address      │       ├──────────────┤                                    │
+│  │ browser      │       │ id (PK)      │                                    │
+│  │ os           │       │ file_name    │                                    │
+│  │ status       │       │ file_path    │                                    │
+│  │ login_time   │       │ file_url     │                                    │
+│  └──────────────┘       │ storage_type │                                    │
+│                         │ status       │                                    │
+│  ┌──────────────┐       └──────────────┘                                    │
+│  │sys_online_user│                                                        │
+│  ├──────────────┤                                                          │
+│  │ id (PK)      │                                                          │
+│  │ user_id      │                                                          │
+│  │ username     │                                                          │
+│  │ token        │                                                          │
+│  │ ip           │                                                          │
+│  │ login_time   │                                                          │
+│  │ expire_time  │                                                          │
+│  └──────────────┘                                                          │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 三、表结构设计
+## 四、表结构设计
 
-### 3.1 login_user (用户表)
+### 4.1 login_user (登录用户表)
 
 | 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
 |--------|------|------|--------|--------|------|
@@ -75,29 +139,30 @@
 | sex | VARCHAR | 10 | YES | NULL | 性别 |
 | id_number | VARCHAR | 30 | YES | NULL | 身份证号 |
 | status | TINYINT | 1 | NO | 1 | 状态：0-禁用，1-正常 |
-| create_time | DATETIME | - | NO | NULL | 创建时间 |
-| update_time | DATETIME | - | NO | NULL | 更新时间 |
+| create_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 创建时间 |
+| update_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 更新时间 |
 | create_user | BIGINT | 19 | YES | NULL | 创建人ID |
 | update_user | BIGINT | 19 | YES | NULL | 修改人ID |
 
 **索引**:
-- `idx_username` ON (username)
+- `uk_username` UNIQUE ON (username)
 - `idx_phone` ON (phone)
 - `idx_status` ON (status)
 
 ---
 
-### 3.2 sys_role (角色表)
+### 4.2 sys_role (角色表)
 
 | 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
 |--------|------|------|--------|--------|------|
 | id | BIGINT | 19 | NO | NULL | 主键，雪花ID |
 | name | VARCHAR | 50 | NO | NULL | 角色名称 |
 | code | VARCHAR | 50 | NO | NULL | 角色编码，唯一索引 |
-| sort | INT | - | YES | 0 | 排序 |
-| status | TINYINT | - | NO | 1 | 状态：0-禁用，1-正常 |
-| create_time | DATETIME | - | NO | NULL | 创建时间 |
-| update_time | DATETIME | - | NO | NULL | 更新时间 |
+| sort | INT | 11 | YES | 0 | 排序 |
+| status | TINYINT | 1 | NO | 1 | 状态：0-禁用，1-正常 |
+| remark | VARCHAR | 500 | YES | NULL | 备注 |
+| create_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 创建时间 |
+| update_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 更新时间 |
 
 **索引**:
 - `uk_code` UNIQUE ON (code)
@@ -105,7 +170,7 @@
 
 ---
 
-### 3.3 account_role (用户角色关联表)
+### 4.3 account_role (用户角色关联表)
 
 | 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
 |--------|------|------|--------|--------|------|
@@ -121,25 +186,41 @@
 
 ---
 
-### 3.4 sys_menu (菜单表)
+### 4.4 sys_role_menu (角色菜单关联表)
+
+| 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
+|--------|------|------|--------|--------|------|
+| id | BIGINT | 19 | NO | NULL | 主键，雪花ID |
+| role_id | BIGINT | 19 | NO | NULL | 角色ID |
+| menu_id | BIGINT | 19 | NO | NULL | 菜单ID |
+| create_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 创建时间 |
+
+**索引**:
+- `idx_role_id` ON (role_id)
+- `idx_menu_id` ON (menu_id)
+- `uk_role_menu` UNIQUE ON (role_id, menu_id)
+
+---
+
+### 4.5 sys_menu (菜单表)
 
 | 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
 |--------|------|------|--------|--------|------|
 | id | BIGINT | 19 | NO | NULL | 主键，雪花ID |
 | parent_id | BIGINT | 19 | YES | 0 | 父菜单ID |
 | name | VARCHAR | 100 | NO | NULL | 菜单名称 |
-| type | TINYINT | - | NO | 0 | 类型：0-目录，1-菜单，2-按钮 |
+| type | TINYINT | 1 | NO | 0 | 类型：0-目录，1-菜单，2-按钮 |
 | path | VARCHAR | 255 | YES | NULL | 路由路径 |
 | component | VARCHAR | 255 | YES | NULL | 组件路径 |
 | icon | VARCHAR | 100 | YES | NULL | 图标 |
-| sort | INT | - | YES | 0 | 排序 |
-| visible | TINYINT | - | NO | 1 | 是否显示：0-隐藏，1-显示 |
+| sort | INT | 11 | YES | 0 | 排序 |
+| visible | TINYINT | 1 | NO | 1 | 是否显示：0-隐藏，1-显示 |
 | redirect | VARCHAR | 255 | YES | NULL | 重定向地址 |
 | perm | VARCHAR | 100 | YES | NULL | 权限标识 |
-| keep_alive | TINYINT | - | NO | 0 | 是否缓存：0-否，1-是 |
-| always_show | TINYINT | - | NO | 0 | 是否总是显示：0-否，1-是 |
-| create_time | DATETIME | - | NO | NULL | 创建时间 |
-| update_time | DATETIME | - | NO | NULL | 更新时间 |
+| keep_alive | TINYINT | 1 | NO | 0 | 是否缓存：0-否，1-是 |
+| always_show | TINYINT | 1 | NO | 0 | 是否总是显示：0-否，1-是 |
+| create_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 创建时间 |
+| update_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 更新时间 |
 
 **索引**:
 - `idx_parent_id` ON (parent_id)
@@ -148,16 +229,43 @@
 
 ---
 
-### 3.5 sys_dict_type (字典类型表)
+### 4.6 sys_dept (部门表)
+
+| 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
+|--------|------|------|--------|--------|------|
+| id | BIGINT | 19 | NO | NULL | 主键，雪花ID |
+| parent_id | BIGINT | 19 | NO | 0 | 父部门ID |
+| name | VARCHAR | 100 | NO | NULL | 部门名称 |
+| code | VARCHAR | 50 | YES | NULL | 部门编码 |
+| sort | INT | 11 | YES | 0 | 排序 |
+| leader | VARCHAR | 50 | YES | NULL | 负责人 |
+| phone | VARCHAR | 20 | YES | NULL | 联系电话 |
+| email | VARCHAR | 100 | YES | NULL | 邮箱 |
+| status | TINYINT | 1 | NO | 1 | 状态：0-禁用，1-正常 |
+| create_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 创建时间 |
+| update_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 更新时间 |
+| create_user | BIGINT | 19 | YES | NULL | 创建人ID |
+| update_user | BIGINT | 19 | YES | NULL | 修改人ID |
+
+**索引**:
+- `idx_parent_id` ON (parent_id)
+- `idx_status` ON (status)
+
+---
+
+### 4.7 sys_dict_type (字典类型表)
 
 | 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
 |--------|------|------|--------|--------|------|
 | id | BIGINT | 19 | NO | NULL | 主键，雪花ID |
 | name | VARCHAR | 100 | NO | NULL | 字典类型名称 |
 | code | VARCHAR | 100 | NO | NULL | 字典类型编码，唯一索引 |
-| status | TINYINT | - | NO | 1 | 状态：0-禁用，1-正常 |
-| create_time | DATETIME | - | NO | NULL | 创建时间 |
-| update_time | DATETIME | - | NO | NULL | 更新时间 |
+| status | TINYINT | 1 | NO | 1 | 状态：0-禁用，1-正常 |
+| remark | VARCHAR | 500 | YES | NULL | 备注 |
+| create_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 创建时间 |
+| update_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 更新时间 |
+| create_user | BIGINT | 19 | YES | NULL | 创建人ID |
+| update_user | BIGINT | 19 | YES | NULL | 修改人ID |
 
 **索引**:
 - `uk_code` UNIQUE ON (code)
@@ -165,7 +273,7 @@
 
 ---
 
-### 3.6 sys_dict_data (字典数据表)
+### 4.8 sys_dict_data (字典数据表)
 
 | 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
 |--------|------|------|--------|--------|------|
@@ -173,10 +281,13 @@
 | dict_type_id | BIGINT | 19 | NO | NULL | 字典类型ID |
 | label | VARCHAR | 100 | NO | NULL | 字典标签 |
 | value | VARCHAR | 255 | NO | NULL | 字典值 |
-| sort | INT | - | YES | 0 | 排序 |
-| status | TINYINT | - | NO | 1 | 状态：0-禁用，1-正常 |
-| create_time | DATETIME | - | NO | NULL | 创建时间 |
-| update_time | DATETIME | - | NO | NULL | 更新时间 |
+| sort | INT | 11 | YES | 0 | 排序 |
+| status | TINYINT | 1 | NO | 1 | 状态：0-禁用，1-正常 |
+| remark | VARCHAR | 500 | YES | NULL | 备注 |
+| create_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 创建时间 |
+| update_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 更新时间 |
+| create_user | BIGINT | 19 | YES | NULL | 创建人ID |
+| update_user | BIGINT | 19 | YES | NULL | 修改人ID |
 
 **索引**:
 - `idx_dict_type_id` ON (dict_type_id)
@@ -185,165 +296,172 @@
 
 ---
 
-## 四、完整建表SQL
+### 4.9 sys_post (岗位表)
 
-```sql
--- ============================================
--- 数据库设计文档
--- 项目: JOSP-SystemTempleJava
--- 版本: 1.0.0
--- 更新日期: 2026-04-21
--- ============================================
+| 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
+|--------|------|------|--------|--------|------|
+| id | BIGINT | 19 | NO | NULL | 主键，雪花ID |
+| name | VARCHAR | 100 | NO | NULL | 岗位名称 |
+| code | VARCHAR | 50 | NO | NULL | 岗位编码，唯一索引 |
+| sort | INT | 11 | YES | 0 | 排序 |
+| status | TINYINT | 1 | NO | 1 | 状态：0-禁用，1-正常 |
+| remark | VARCHAR | 500 | YES | NULL | 备注 |
+| create_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 创建时间 |
+| update_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 更新时间 |
+| create_user | BIGINT | 19 | YES | NULL | 创建人ID |
+| update_user | BIGINT | 19 | YES | NULL | 修改人ID |
 
--- 创建数据库(如果不存在)
--- CREATE DATABASE IF NOT EXISTS josp_system DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
--- USE josp_system;
+**索引**:
+- `uk_post_code` UNIQUE ON (code)
+- `idx_status` ON (status)
 
--- -----------------------------------------
--- 1. 登录用户表 (login_user)
--- -----------------------------------------
-DROP TABLE IF EXISTS `login_user`;
-CREATE TABLE `login_user` (
-    `id` BIGINT NOT NULL COMMENT '主键，雪花ID',
-    `name` VARCHAR(100) DEFAULT NULL COMMENT '姓名',
-    `username` VARCHAR(50) NOT NULL COMMENT '用户名',
-    `password` VARCHAR(255) DEFAULT NULL COMMENT '密码',
-    `phone` VARCHAR(20) DEFAULT NULL COMMENT '手机号',
-    `sex` VARCHAR(10) DEFAULT NULL COMMENT '性别',
-    `id_number` VARCHAR(30) DEFAULT NULL COMMENT '身份证号',
-    `status` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '状态：0-禁用，1-正常',
-    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    `create_user` BIGINT(19) DEFAULT NULL COMMENT '创建人ID',
-    `update_user` BIGINT(19) DEFAULT NULL COMMENT '修改人ID',
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_username` (`username`),
-    KEY `idx_phone` (`phone`),
-    KEY `idx_status` (`status`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='登录用户表';
+---
 
--- -----------------------------------------
--- 2. 角色表 (sys_role)
--- -----------------------------------------
-DROP TABLE IF EXISTS `sys_role`;
-CREATE TABLE `sys_role` (
-    `id` BIGINT(19) NOT NULL COMMENT '主键，雪花ID',
-    `name` VARCHAR(50) NOT NULL COMMENT '角色名称',
-    `code` VARCHAR(50) NOT NULL COMMENT '角色编码',
-    `sort` INT(11) DEFAULT 0 COMMENT '排序',
-    `status` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '状态：0-禁用，1-正常',
-    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_code` (`code`),
-    KEY `idx_status` (`status`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='角色表';
+### 4.10 sys_oper_log (操作日志表)
 
--- -----------------------------------------
--- 3. 用户角色关联表 (account_role)
--- -----------------------------------------
-DROP TABLE IF EXISTS `account_role`;
-CREATE TABLE `account_role` (
-    `id` BIGINT(19) NOT NULL COMMENT '主键，雪花ID',
-    `user_id` BIGINT(19) NOT NULL COMMENT '用户ID',
-    `role_id` BIGINT(19) NOT NULL COMMENT '角色ID',
-    `create_time` DATETIME DEFAULT NULL COMMENT '创建时间',
-    PRIMARY KEY (`id`),
-    KEY `idx_user_id` (`user_id`),
-    KEY `idx_role_id` (`role_id`),
-    UNIQUE KEY `uk_user_role` (`user_id`, `role_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户角色关联表';
+| 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
+|--------|------|------|--------|--------|------|
+| id | BIGINT | 19 | NO | NULL | 主键，雪花ID |
+| title | VARCHAR | 255 | YES | NULL | 操作标题 |
+| business_type | VARCHAR | 50 | YES | NULL | 业务类型 |
+| method | VARCHAR | 200 | YES | NULL | 请求方法 |
+| request_method | VARCHAR | 10 | YES | NULL | 请求方式 |
+| operator_type | VARCHAR | 20 | YES | NULL | 操作类别 |
+| oper_id | BIGINT | 19 | YES | NULL | 操作人ID |
+| oper_name | VARCHAR | 100 | YES | NULL | 操作人名称 |
+| dept_name | VARCHAR | 100 | YES | NULL | 部门名称 |
+| oper_url | VARCHAR | 500 | YES | NULL | 请求URL |
+| oper_ip | VARCHAR | 50 | YES | NULL | 操作地址 |
+| oper_location | VARCHAR | 255 | YES | NULL | 操作地点 |
+| oper_param | TEXT | - | YES | NULL | 请求参数 |
+| json_result | TEXT | - | YES | NULL | 返回参数 |
+| status | TINYINT | 1 | NO | 1 | 操作状态：0-异常，1-正常 |
+| error_msg | TEXT | - | YES | NULL | 错误消息 |
+| oper_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 操作时间 |
+| cost_time | BIGINT | 20 | YES | NULL | 消耗时间(毫秒) |
 
--- -----------------------------------------
--- 4. 菜单表 (sys_menu)
--- -----------------------------------------
-DROP TABLE IF EXISTS `sys_menu`;
-CREATE TABLE `sys_menu` (
-    `id` BIGINT(19) NOT NULL COMMENT '主键，雪花ID',
-    `parent_id` BIGINT(19) DEFAULT 0 COMMENT '父菜单ID',
-    `name` VARCHAR(100) NOT NULL COMMENT '菜单名称',
-    `type` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '类型：0-目录，1-菜单，2-按钮',
-    `path` VARCHAR(255) DEFAULT NULL COMMENT '路由路径',
-    `component` VARCHAR(255) DEFAULT NULL COMMENT '组件路径',
-    `icon` VARCHAR(100) DEFAULT NULL COMMENT '图标',
-    `sort` INT(11) DEFAULT 0 COMMENT '排序',
-    `visible` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '是否显示：0-隐藏，1-显示',
-    `redirect` VARCHAR(255) DEFAULT NULL COMMENT '重定向地址',
-    `perm` VARCHAR(100) DEFAULT NULL COMMENT '权限标识',
-    `keep_alive` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否缓存：0-否，1-是',
-    `always_show` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否总是显示：0-否，1-是',
-    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    PRIMARY KEY (`id`),
-    KEY `idx_parent_id` (`parent_id`),
-    KEY `idx_type` (`type`),
-    KEY `idx_visible` (`visible`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='菜单表';
+**索引**:
+- `idx_oper_time` ON (oper_time)
+- `idx_oper_id` ON (oper_id)
+- `idx_status` ON (status)
 
--- -----------------------------------------
--- 5. 字典类型表 (sys_dict_type)
--- -----------------------------------------
-DROP TABLE IF EXISTS `sys_dict_type`;
-CREATE TABLE `sys_dict_type` (
-    `id` BIGINT(19) NOT NULL COMMENT '主键，雪花ID',
-    `name` VARCHAR(100) NOT NULL COMMENT '字典类型名称',
-    `code` VARCHAR(100) NOT NULL COMMENT '字典类型编码',
-    `status` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '状态：0-禁用，1-正常',
-    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_code` (`code`),
-    KEY `idx_status` (`status`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='字典类型表';
+---
 
--- -----------------------------------------
--- 6. 字典数据表 (sys_dict_data)
--- -----------------------------------------
-DROP TABLE IF EXISTS `sys_dict_data`;
-CREATE TABLE `sys_dict_data` (
-    `id` BIGINT(19) NOT NULL COMMENT '主键，雪花ID',
-    `dict_type_id` BIGINT(19) NOT NULL COMMENT '字典类型ID',
-    `label` VARCHAR(100) NOT NULL COMMENT '字典标签',
-    `value` VARCHAR(255) NOT NULL COMMENT '字典值',
-    `sort` INT(11) DEFAULT 0 COMMENT '排序',
-    `status` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '状态：0-禁用，1-正常',
-    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    PRIMARY KEY (`id`),
-    KEY `idx_dict_type_id` (`dict_type_id`),
-    KEY `idx_status` (`status`),
-    KEY `idx_sort` (`sort`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='字典数据表';
+### 4.11 sys_login_log (登录日志表)
 
--- -----------------------------------------
--- 初始化数据
--- -----------------------------------------
+| 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
+|--------|------|------|--------|--------|------|
+| id | BIGINT | 19 | NO | NULL | 主键，雪花ID |
+| user_id | BIGINT | 19 | YES | NULL | 用户ID |
+| username | VARCHAR | 100 | YES | NULL | 用户名 |
+| ip | VARCHAR | 50 | YES | NULL | 登录IP地址 |
+| address | VARCHAR | 255 | YES | NULL | 登录地点 |
+| browser | VARCHAR | 100 | YES | NULL | 浏览器类型 |
+| os | VARCHAR | 100 | YES | NULL | 操作系统 |
+| status | TINYINT | 1 | NO | 1 | 登录状态：0-失败，1-成功 |
+| msg | VARCHAR | 500 | YES | NULL | 提示消息 |
+| login_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 登录时间 |
 
--- 插入默认超级管理员角色
-INSERT INTO `sys_role` (`id`, `name`, `code`, `sort`, `status`, `create_time`, `update_time`)
-VALUES (751892017468610561, '超级管理员', 'SUPER_ADMIN', 1, 1, NOW(), NOW());
+**索引**:
+- `idx_user_id` ON (user_id)
+- `idx_username` ON (username)
+- `idx_login_time` ON (login_time)
+- `idx_status` ON (status)
 
--- 插入默认普通用户角色
-INSERT INTO `sys_role` (`id`, `name`, `code`, `sort`, `status`, `create_time`, `update_time`)
-VALUES (751892017468610562, '普通用户', 'USER', 2, 1, NOW(), NOW());
+---
 
--- 插入默认管理员用户 (密码: admin123)
-INSERT INTO `login_user` (`id`, `name`, `username`, `password`, `phone`, `sex`, `status`, `create_time`, `update_time`)
-VALUES (751892017468610560, '系统管理员', 'admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EH', NULL, NULL, 1, NOW(), NOW());
+### 4.12 sys_notice (通知公告表)
 
--- 关联管理员和超级管理员角色
-INSERT INTO `account_role` (`id`, `user_id`, `role_id`, `create_time`)
-VALUES (751892017468610563, 751892017468610560, 751892017468610561, NOW());
+| 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
+|--------|------|------|--------|--------|------|
+| id | BIGINT | 19 | NO | NULL | 主键，雪花ID |
+| title | VARCHAR | 255 | NO | NULL | 公告标题 |
+| content | TEXT | - | YES | NULL | 公告内容 |
+| type | TINYINT | 1 | NO | 1 | 公告类型：1-通知，2-公告 |
+| status | TINYINT | 1 | NO | 1 | 状态：0-禁用，1-正常 |
+| publish_time | DATETIME | - | YES | NULL | 发布时间 |
+| create_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 创建时间 |
+| update_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 更新时间 |
+| create_user | BIGINT | 19 | YES | NULL | 创建人ID |
+| update_user | BIGINT | 19 | YES | NULL | 修改人ID |
 
--- 插入示例字典类型
-INSERT INTO `sys_dict_type` (`id`, `name`, `code`, `status`, `create_time`, `update_time`)
-VALUES (751892017468610564, '用户状态', 'user_status', 1, NOW(), NOW());
+**索引**:
+- `idx_type` ON (type)
+- `idx_status` ON (status)
+- `idx_publish_time` ON (publish_time)
 
--- 插入示例字典数据
-INSERT INTO `sys_dict_data` (`id`, `dict_type_id`, `label`, `value`, `sort`, `status`, `create_time`, `update_time`)
-VALUES (751892017468610565, 751892017468610564, '正常', '1', 1, 1, NOW(), NOW()),
-       (751892017468610566, 751892017468610564, '禁用', '0', 2, 1, NOW(), NOW());
-```
+---
+
+### 4.13 sys_config (系统配置表)
+
+| 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
+|--------|------|------|--------|--------|------|
+| id | BIGINT | 19 | NO | NULL | 主键，雪花ID |
+| name | VARCHAR | 100 | NO | NULL | 配置名称 |
+| key | VARCHAR | 100 | NO | NULL | 配置键，唯一索引 |
+| value | VARCHAR | 500 | YES | NULL | 配置值 |
+| type | VARCHAR | 20 | NO | string | 配置类型：string, number, boolean, json |
+| status | TINYINT | 1 | NO | 1 | 状态：0-禁用，1-正常 |
+| remark | VARCHAR | 500 | YES | NULL | 备注 |
+| create_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 创建时间 |
+| update_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 更新时间 |
+| create_user | BIGINT | 19 | YES | NULL | 创建人ID |
+| update_user | BIGINT | 19 | YES | NULL | 修改人ID |
+
+**索引**:
+- `uk_config_key` UNIQUE ON (key)
+- `idx_status` ON (status)
+
+---
+
+### 4.14 sys_file (文件管理表)
+
+| 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
+|--------|------|------|--------|--------|------|
+| id | BIGINT | 19 | NO | NULL | 主键，雪花ID |
+| file_name | VARCHAR | 255 | NO | NULL | 文件名称 |
+| original_name | VARCHAR | 255 | YES | NULL | 原始文件名 |
+| file_suffix | VARCHAR | 50 | YES | NULL | 文件后缀 |
+| file_size | BIGINT | 20 | YES | NULL | 文件大小(字节) |
+| file_path | VARCHAR | 500 | NO | NULL | 文件路径 |
+| file_url | VARCHAR | 500 | YES | NULL | 文件访问URL |
+| file_type | VARCHAR | 50 | YES | NULL | 文件类型 |
+| storage_type | VARCHAR | 20 | NO | local | 存储类型：local, oss, s3 |
+| status | TINYINT | 1 | NO | 1 | 状态：0-禁用，1-正常 |
+| create_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 创建时间 |
+| update_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 更新时间 |
+| create_user | BIGINT | 19 | YES | NULL | 创建人ID |
+| update_user | BIGINT | 19 | YES | NULL | 修改人ID |
+
+**索引**:
+- `idx_file_type` ON (file_type)
+- `idx_create_user` ON (create_user)
+- `idx_status` ON (status)
+
+---
+
+### 4.15 sys_online_user (在线用户表)
+
+> 说明: 基于Redis存储，MySQL仅用于备份/审计
+
+| 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
+|--------|------|------|--------|--------|------|
+| id | BIGINT | 19 | NO | NULL | 主键，雪花ID |
+| user_id | BIGINT | 19 | NO | NULL | 用户ID |
+| username | VARCHAR | 100 | NO | NULL | 用户名 |
+| token | VARCHAR | 500 | NO | NULL | 登录Token，唯一索引 |
+| ip | VARCHAR | 50 | YES | NULL | 登录IP |
+| address | VARCHAR | 255 | YES | NULL | 登录地址 |
+| browser | VARCHAR | 100 | YES | NULL | 浏览器 |
+| os | VARCHAR | 100 | YES | NULL | 操作系统 |
+| login_time | DATETIME | - | NO | CURRENT_TIMESTAMP | 登录时间 |
+| expire_time | DATETIME | - | NO | NULL | 过期时间 |
+
+**索引**:
+- `uk_token` UNIQUE ON (token)
+- `idx_user_id` ON (user_id)
+- `idx_username` ON (username)
+- `idx_expire_time` ON (expire_time)
 
 ---
 
@@ -354,18 +472,28 @@ VALUES (751892017468610565, 751892017468610564, '正常', '1', 1, 1, NOW(), NOW(
 - 一个用户可以拥有多个角色
 - 一个角色可以分配给多个用户
 
-### 5.2 Menu自关联 (一对多)
+### 5.2 Role与Menu的关系 (多对多)
+- 通过中间表 `sys_role_menu` 关联
+- 一个角色可以拥有多个菜单权限
+- 一个菜单可以分配给多个角色
+
+### 5.3 Menu自关联 (一对多)
 - 通过 `parent_id` 字段实现树形结构
 - `parent_id = 0` 表示顶级菜单
 - 支持多级菜单嵌套
 
-### 5.3 DictType与DictData的关系 (一对多)
+### 5.4 Dept自关联 (一对多)
+- 通过 `parent_id` 字段实现树形结构
+- `parent_id = 0` 表示顶级部门
+- 支持多级部门嵌套
+
+### 5.5 DictType与DictData的关系 (一对多)
 - 一个字典类型下可以有多个字典数据
 - 通过 `dict_type_id` 字段关联
 
 ---
 
-## 六、索引设计说明
+## 六、索引设计汇总
 
 | 表名 | 索引类型 | 索引名 | 包含字段 | 说明 |
 |------|---------|--------|----------|------|
@@ -377,30 +505,67 @@ VALUES (751892017468610565, 751892017468610564, '正常', '1', 1, 1, NOW(), NOW(
 | account_role | UNIQUE | uk_user_role | user_id, role_id | 用户角色唯一组合 |
 | account_role | INDEX | idx_user_id | user_id | 用户查询 |
 | account_role | INDEX | idx_role_id | role_id | 角色查询 |
+| sys_role_menu | UNIQUE | uk_role_menu | role_id, menu_id | 角色菜单唯一组合 |
+| sys_role_menu | INDEX | idx_role_id | role_id | 角色查询 |
+| sys_role_menu | INDEX | idx_menu_id | menu_id | 菜单查询 |
 | sys_menu | INDEX | idx_parent_id | parent_id | 父子菜单查询 |
 | sys_menu | INDEX | idx_type | type | 类型筛选 |
 | sys_menu | INDEX | idx_visible | visible | 显示筛选 |
+| sys_dept | INDEX | idx_parent_id | parent_id | 父子部门查询 |
+| sys_dept | INDEX | idx_status | status | 状态筛选 |
 | sys_dict_type | UNIQUE | uk_code | code | 类型编码唯一 |
 | sys_dict_type | INDEX | idx_status | status | 状态筛选 |
 | sys_dict_data | INDEX | idx_dict_type_id | dict_type_id | 类型查询 |
 | sys_dict_data | INDEX | idx_status | status | 状态筛选 |
 | sys_dict_data | INDEX | idx_sort | sort | 排序查询 |
+| sys_post | UNIQUE | uk_post_code | code | 岗位编码唯一 |
+| sys_post | INDEX | idx_status | status | 状态筛选 |
+| sys_oper_log | INDEX | idx_oper_time | oper_time | 操作时间查询 |
+| sys_oper_log | INDEX | idx_oper_id | oper_id | 操作人查询 |
+| sys_oper_log | INDEX | idx_status | status | 状态筛选 |
+| sys_login_log | INDEX | idx_user_id | user_id | 用户查询 |
+| sys_login_log | INDEX | idx_username | username | 用户名查询 |
+| sys_login_log | INDEX | idx_login_time | login_time | 登录时间查询 |
+| sys_login_log | INDEX | idx_status | status | 状态筛选 |
+| sys_notice | INDEX | idx_type | type | 类型筛选 |
+| sys_notice | INDEX | idx_status | status | 状态筛选 |
+| sys_notice | INDEX | idx_publish_time | publish_time | 发布时间查询 |
+| sys_config | UNIQUE | uk_config_key | key | 配置键唯一 |
+| sys_config | INDEX | idx_status | status | 状态筛选 |
+| sys_file | INDEX | idx_file_type | file_type | 文件类型查询 |
+| sys_file | INDEX | idx_create_user | create_user | 创建人查询 |
+| sys_file | INDEX | idx_status | status | 状态筛选 |
+| sys_online_user | UNIQUE | uk_token | token | Token唯一 |
+| sys_online_user | INDEX | idx_user_id | user_id | 用户查询 |
+| sys_online_user | INDEX | idx_username | username | 用户名查询 |
+| sys_online_user | INDEX | idx_expire_time | expire_time | 过期时间查询 |
 
 ---
 
 ## 七、设计规范
 
-1. **命名规范**
-   - 表名使用snake_case命名
-   - 字段名使用snake_case命名
-   - 索引名使用 `idx_` 前缀，唯一索引使用 `uk_` 前缀
+### 7.1 命名规范
+- 表名使用snake_case命名
+- 字段名使用snake_case命名
+- 索引名使用 `idx_` 前缀，唯一索引使用 `uk_` 前缀
 
-2. **字段类型规范**
-   - 状态字段使用 TINYINT(1)
-   - ID主键使用 BIGINT(19)
-   - 时间字段使用 DATETIME
-   - 字符串根据长度选择 VARCHAR 或 TEXT
+### 7.2 字段类型规范
+- 状态字段使用 TINYINT(1)
+- ID主键使用 BIGINT(19) 雪花ID
+- 时间字段使用 DATETIME
+- 字符串根据长度选择 VARCHAR 或 TEXT
 
-3. **字符集**
-   - 所有表使用 utf8mb4 字符集
-   - 排序规则使用 utf8mb4_unicode_ci
+### 7.3 字符集
+- 所有表使用 utf8mb4 字符集
+- 排序规则使用 utf8mb4_unicode_ci
+
+### 7.4 建表语句特性
+- 所有表都有 `DROP TABLE IF EXISTS` 语句，确保脚本可重复执行
+- 所有表都使用 InnoDB 引擎
+- 主键使用 BIGINT(19) 雪花ID
+
+---
+
+## 八、参考文件
+
+- 数据库建表脚本: `/db/schema.sql`

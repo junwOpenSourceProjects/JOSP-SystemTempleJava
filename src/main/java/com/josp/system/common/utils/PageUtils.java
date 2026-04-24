@@ -21,6 +21,7 @@ public class PageUtils {
     /**
      * 构建分页结果
      */
+    @SuppressWarnings("unchecked")
     public static <T> PageResult<T> buildPageResult(IPage<?> page) {
         return new PageResult<>((List<T>) page.getRecords(), page.getTotal());
     }
@@ -28,6 +29,7 @@ public class PageUtils {
     /**
      * 构建分页结果
      */
+    @SuppressWarnings("unchecked")
     public static <T> PageResult<T> buildPageResult(IPage<?> page, Class<T> clazz) {
         return new PageResult<>((List<T>) page.getRecords(), page.getTotal());
     }

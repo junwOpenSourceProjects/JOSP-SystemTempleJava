@@ -6,7 +6,6 @@ import com.josp.system.common.api.ServerInfo;
 import com.josp.system.service.MonitorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -74,6 +73,7 @@ public class MonitorServiceImpl implements MonitorService {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public DatabaseInfo getDatabaseInfo() {
         DatabaseInfo dbInfo = new DatabaseInfo();
         dbInfo.setDatabaseType("MySQL");
@@ -81,7 +81,7 @@ public class MonitorServiceImpl implements MonitorService {
 
         try (Connection connection = dataSource.getConnection()) {
             DatabaseMetaData metaData = connection.getMetaData();
-            dbInfo.setDatabaseName(connection.getCatalog());
+            dbInfo.setDatabaseName(connection.getCatalog()); // MySQL中catalog即database名称
             dbInfo.setUrl(metaData.getURL());
             dbInfo.setDriverName(metaData.getDriverName());
             dbInfo.setVersion(metaData.getDatabaseProductVersion());
