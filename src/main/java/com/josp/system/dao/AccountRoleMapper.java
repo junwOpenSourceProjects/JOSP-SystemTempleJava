@@ -12,6 +12,11 @@ import java.util.List;
 public interface AccountRoleMapper extends BaseMapper<AccountRole> {
 
     /**
+     * 批量插入用户角色关联
+     */
+    int insertBatch(@org.apache.ibatis.annotations.Param("list") List<AccountRole> list);
+
+    /**
      * 根据用户ID查询角色ID列表
      */
     @Select("SELECT role_id FROM account_role WHERE user_id = #{userId}")
