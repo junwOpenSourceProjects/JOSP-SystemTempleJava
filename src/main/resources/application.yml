@@ -17,16 +17,18 @@ spring:
     timeout: 10s
     lettuce:
       pool:
-        max-active: 8
-        max-idle: 8
-        min-idle: 0
-        max-wait: -1s
+        max-active: 4
+        max-idle: 4
+        min-idle: 1
+        max-wait: 5000ms
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
   security:
     user:
       name: admin
       password: password
+  main:
+    lazy-initialization: true   # 延迟Bean初始化，显著降低启动峰值内存
 
 mybatis-plus:
   configuration:
@@ -45,4 +47,4 @@ server:
 
 logging:
   level:
-    com.josp.system: debug
+    com.josp.system: info
