@@ -366,9 +366,9 @@ VALUES (751892017468610561, '超级管理员', 'SUPER_ADMIN', 1, 1, NOW(), NOW()
 INSERT INTO `sys_role` (`id`, `name`, `code`, `sort`, `status`, `create_time`, `update_time`)
 VALUES (751892017468610562, '普通用户', 'USER', 2, 1, NOW(), NOW());
 
--- 插入默认管理员用户 (密码: admin123)
+-- 插入默认管理员用户 (密码: 123456)
 INSERT INTO `login_user` (`id`, `name`, `username`, `password`, `phone`, `sex`, `status`, `create_time`, `update_time`)
-VALUES (751892017468610560, '系统管理员', 'admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EH', NULL, NULL, 1, NOW(), NOW());
+VALUES (751892017468610560, '系统管理员', 'admin', '$2a$10$CII/R3vOc5aJL2ncqzSdAuMx9/rh5Mi9zqwXMfdYAJnvS8rPgfbwm', NULL, NULL, 1, NOW(), NOW());
 
 -- 关联管理员和超级管理员角色
 INSERT INTO `account_role` (`id`, `user_id`, `role_id`, `create_time`)
