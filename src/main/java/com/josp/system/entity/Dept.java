@@ -88,5 +88,6 @@ public class Dept implements Serializable {
     /**
      * 子部门列表（用于树形结构）
      */
+    @TableField(exist = false)
     private List<Dept> children;
 }
