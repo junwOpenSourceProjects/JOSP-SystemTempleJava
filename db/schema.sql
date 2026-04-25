@@ -302,7 +302,7 @@ CREATE TABLE `sys_config` (
     `create_user` BIGINT(19) DEFAULT NULL COMMENT '创建人ID',
     `update_user` BIGINT(19) DEFAULT NULL COMMENT '修改人ID',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_config_key` (`key`),
+    UNIQUE KEY `uk_config_key` (`config_key`),
     KEY `idx_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='系统配置表';
 
@@ -434,7 +434,7 @@ INSERT INTO `sys_dict_data` (`id`, `dict_type_id`, `label`, `value`, `sort`, `st
 (751892017468610586, 751892017468610572, '公告', '2', 2, 1, '公告类型', NOW(), NOW());
 
 -- 插入系统配置
-INSERT INTO `sys_config` (`id`, `name`, `key`, `value`, `type`, `status`, `remark`, `create_time`, `update_time`) VALUES
+INSERT INTO `sys_config` (`id`, `name`, `config_key`, `value`, `type`, `status`, `remark`, `create_time`, `update_time`) VALUES
 (751892017468610600, '系统名称', 'sys.name', 'JOSP管理系统', 'string', 1, '系统名称', NOW(), NOW()),
 (751892017468610601, '系统版本', 'sys.version', '1.0.0', 'string', 1, '系统版本', NOW(), NOW()),
 (751892017468610602, '版权信息', 'sys.copyright', '© 2024 JOSP', 'string', 1, '版权信息', NOW(), NOW());
