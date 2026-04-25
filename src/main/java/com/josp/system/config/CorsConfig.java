@@ -38,10 +38,12 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // 允许前端开发环境 localhost:3000 访问（Vue3 默认端口）
+        // 允许前端开发环境 localhost:3000/3001 访问（Vue3 默认端口）
         // 生产环境应替换为实际域名，如 "https://yourdomain.com"
         config.addAllowedOriginPattern("http://localhost:3000");
         config.addAllowedOriginPattern("http://127.0.0.1:3000");
+        config.addAllowedOriginPattern("http://localhost:3001");
+        config.addAllowedOriginPattern("http://127.0.0.1:3001");
 
         // 允许携带凭证（cookies、Authorization header 等）
         // 注意：设置了此选项后，origin 不能使用 "*"
