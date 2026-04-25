@@ -110,13 +110,14 @@ class DeptServiceTest {
         Dept dept = buildDept("update");
         deptService.createDept(dept);
 
-        dept.setName("修改后的部门名_" + System.currentTimeMillis());
+        String newName = "修改后的部门名_" + System.currentTimeMillis();
+        dept.setName(newName);
         dept.setLeader("新负责人");
         boolean result = deptService.updateDept(dept);
 
         assertTrue(result);
         Dept updated = deptService.getDeptById(dept.getId());
-        assertEquals("修改后的部门名_" + System.currentTimeMillis(), updated.getName());
+        assertEquals(newName, updated.getName());
         assertEquals("新负责人", updated.getLeader());
     }
 
@@ -269,7 +270,7 @@ class DeptServiceTest {
 
         assertNotNull(result);
         assertTrue(result.getTotal() >= 5);
-        assertEquals(10, result.getRecords().size());
+        assertEquals(10, result.getList().size());
     }
 
     @Test
@@ -282,7 +283,7 @@ class DeptServiceTest {
         PageResult<Map<String, Object>> result = deptService.getDeptPage(1, 10, uniqueName, null);
 
         assertNotNull(result);
-        assertTrue(result.getRecords().stream()
+        assertTrue(result.getList().stream()
                 .anyMatch(m -> uniqueName.equals(m.get("name"))));
     }
 
@@ -298,7 +299,7 @@ class DeptServiceTest {
 
         PageResult<Map<String, Object>> result = deptService.getDeptPage(1, 10, null, 1);
 
-        assertTrue(result.getRecords().stream()
+        assertTrue(result.getList().stream()
                 .allMatch(m -> 1 == ((Number) m.get("status")).intValue()));
     }
 
@@ -311,7 +312,7 @@ class DeptServiceTest {
         PageResult<Map<String, Object>> result = deptService.getDeptPage(2, 10, null, null);
 
         assertNotNull(result);
-        assertEquals(10, result.getRecords().size(), "第二页应返回 10 条");
+        assertEquals(10, result.getList().size(), "第二页应返回 10 条");
     }
 
     @Test
@@ -320,6 +321,6 @@ class DeptServiceTest {
 
         assertNotNull(result);
         assertEquals(0, result.getTotal());
-        assertTrue(result.getRecords().isEmpty());
+        assertTrue(result.getList().isEmpty());
     }
 }

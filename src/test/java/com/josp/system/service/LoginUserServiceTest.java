@@ -56,7 +56,7 @@ class LoginUserServiceTest {
         user.setUsername("u_" + suffix + "_" + System.currentTimeMillis());
         user.setPassword("password123");
         user.setName("测试用户_" + suffix);
-        user.setPhone("13800000" + suffix);
+        user.setPhone("13800000000");
         user.setSex("1");
         user.setIdNumber("3200000000000000" + suffix);
         user.setStatus(1);
@@ -321,6 +321,7 @@ class LoginUserServiceTest {
         loginUserService.save(user1);
 
         LoginUser user2 = buildTestUser("dup");
+        user2.setUsername(user1.getUsername());
         user2.setCreateTime(LocalDateTime.now());
         user2.setUpdateTime(LocalDateTime.now());
         assertThrows(Exception.class, () -> loginUserService.save(user2),

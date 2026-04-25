@@ -22,19 +22,19 @@ import java.util.List;
 @AllArgsConstructor
 public class PageResult<T> {
     /** The list of records for the current page */
-    private List<T> records;
+    private List<T> list;
 
     /** Total number of records across all pages */
     private long total;
 
     /**
      * Convenience constructor assuming the list contains all records (no pagination).
-     * Sets total = records.size().
+     * Sets total = list.size().
      *
-     * @param records the full list of records
+     * @param list the full list of records
      */
-    public PageResult(List<T> records) {
-        this.records = records;
-        this.total = records.size();
+    public PageResult(List<T> list) {
+        this.list = list;
+        this.total = list.size();
     }
 }

@@ -5,12 +5,15 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.josp.system.common.api.Meta;
 import com.josp.system.common.api.RouteVO;
 import com.josp.system.dao.MenuMapper;
+import com.josp.system.dao.RoleMenuMapper;
 import com.josp.system.dto.MenuDTO;
+import com.josp.system.entity.RoleMenu;
 import com.josp.system.entity.Menu;
 import com.josp.system.service.MenuService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -29,7 +32,10 @@ import java.util.stream.Collectors;
  * @since 2024-01-01
  */
 @Service
+@RequiredArgsConstructor
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
+
+    private final RoleMenuMapper roleMenuMapper;
 
     @Override
     public List<RouteVO> listRoutesByUserId(Long userId) {
@@ -98,6 +104,11 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         if (count(wrapper) > 0) {
             throw new RuntimeException("请先删除子菜单");
         }
+
+        // 删除角色菜单关联
+        LambdaQueryWrapper<RoleMenu> roleMenuWrapper = new LambdaQueryWrapper<>();
+        roleMenuWrapper.eq(RoleMenu::getMenuId, id);
+        roleMenuMapper.delete(roleMenuWrapper);
 
         return removeById(id);
     }

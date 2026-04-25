@@ -64,7 +64,11 @@ public class DictManageServiceImpl extends ServiceImpl<DictTypeMapper, DictType>
     @CacheEvict(value = "dict", allEntries = true)
     public boolean createDictType(DictTypeDTO dto) {
         DictType dictType = convertToDictTypeEntity(dto);
-        return save(dictType);
+        boolean result = save(dictType);
+        if (result) {
+            dto.setId(dictType.getId());
+        }
+        return result;
     }
 
     @Override
@@ -137,7 +141,11 @@ public class DictManageServiceImpl extends ServiceImpl<DictTypeMapper, DictType>
     @CacheEvict(value = "dict", allEntries = true)
     public boolean createDictData(DictDataDTO dto) {
         DictData dictData = convertToDictDataEntity(dto);
-        return dictDataMapper.insert(dictData) > 0;
+        boolean result = dictDataMapper.insert(dictData) > 0;
+        if (result) {
+            dto.setId(dictData.getId());
+        }
+        return result;
     }
 
     @Override

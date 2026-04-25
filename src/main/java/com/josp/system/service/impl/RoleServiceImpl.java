@@ -2,11 +2,16 @@ package com.josp.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.josp.system.dao.AccountRoleMapper;
 import com.josp.system.dao.RoleMapper;
 import com.josp.system.dao.RoleMenuMapper;
 import com.josp.system.dto.RoleDTO;
+import com.josp.system.entity.AccountRole;
 import com.josp.system.entity.Role;
+import com.josp.system.entity.RoleMenu;
 import com.josp.system.service.RoleService;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Role Service Implementation.
+ * 角色服务实现类。
  *
- * <p>Handles CRUD operations for system roles and manages
- * the role-to-menu permission assignments via {@code sys_role_menu}.
+ * <p>处理系统角色的 CRUD 操作，并通过 {@code sys_role_menu} 管理角色到菜单的权限分配。
  *
  * @author JOSP Team
  * @version 1.0
@@ -30,6 +34,7 @@ import java.util.List;
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements RoleService {
 
     private final RoleMenuMapper roleMenuMapper;
+    private final AccountRoleMapper accountRoleMapper;
 
     @Override
     public List<Role> listAllRoles() {
@@ -59,11 +64,21 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         role.setRemark(roleDTO.getRemark());
 
         boolean result = save(role);
+        if (result) {
+            roleDTO.setId(role.getId());
+        }
 
         // 分配菜单权限
         if (result && roleDTO.getMenuIds() != null && !roleDTO.getMenuIds().isEmpty()) {
             roleMenuMapper.deleteByRoleId(role.getId());
-            roleMenuMapper.batchInsert(role.getId(), roleDTO.getMenuIds());
+            List<RoleMenu> roleMenus = roleDTO.getMenuIds().stream().map(menuId -> {
+                RoleMenu rm = new RoleMenu();
+                rm.setId(IdWorker.getId());
+                rm.setRoleId(role.getId());
+                rm.setMenuId(menuId);
+                return rm;
+            }).collect(Collectors.toList());
+            roleMenuMapper.batchInsert(roleMenus);
         }
 
         return result;
@@ -98,7 +113,14 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         if (result) {
             roleMenuMapper.deleteByRoleId(role.getId());
             if (roleDTO.getMenuIds() != null && !roleDTO.getMenuIds().isEmpty()) {
-                roleMenuMapper.batchInsert(role.getId(), roleDTO.getMenuIds());
+                List<RoleMenu> roleMenus = roleDTO.getMenuIds().stream().map(menuId -> {
+                    RoleMenu rm = new RoleMenu();
+                    rm.setId(IdWorker.getId());
+                    rm.setRoleId(role.getId());
+                    rm.setMenuId(menuId);
+                    return rm;
+                }).collect(Collectors.toList());
+                roleMenuMapper.batchInsert(roleMenus);
             }
         }
 
@@ -110,6 +132,17 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     public boolean deleteRole(Long id) {
         if (id == null) {
             throw new RuntimeException("角色ID不能为空");
+        }
+        Role existRole = getById(id);
+        if (existRole == null) {
+            throw new RuntimeException("角色不存在");
+        }
+
+        // 检查是否有关联用户
+        LambdaQueryWrapper<AccountRole> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(AccountRole::getRoleId, id);
+        if (accountRoleMapper.selectCount(queryWrapper) > 0) {
+            throw new RuntimeException("该角色已分配给用户，无法删除");
         }
 
         // 删除角色菜单关联
@@ -137,19 +170,26 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
         // 分配新菜单权限
         if (menuIds != null && !menuIds.isEmpty()) {
-            roleMenuMapper.batchInsert(roleId, menuIds);
+            List<RoleMenu> roleMenus = menuIds.stream().map(menuId -> {
+                RoleMenu rm = new RoleMenu();
+                rm.setId(IdWorker.getId());
+                rm.setRoleId(roleId);
+                rm.setMenuId(menuId);
+                return rm;
+            }).collect(Collectors.toList());
+            roleMenuMapper.batchInsert(roleMenus);
         }
 
         return true;
     }
 
     /**
-     * Checks whether a role code already exists, optionally excluding a given role ID
-     * (used to allow updating a role to its own code without triggering a duplicate error).
+     * 检查角色编码是否已存在，可选择排除指定的角色 ID
+     * （用于允许将角色更新为其自身的编码而不触发重复错误）。
      *
-     * @param code      the role code to check
-     * @param excludeId role ID to ignore (pass null to check all records)
-     * @return true if the code already exists in another role
+     * @param code      要检查的角色编码
+     * @param excludeId 要忽略的角色 ID（传入 null 以检查所有记录）
+     * @return 如果编码已在其他角色中存在则返回 true
      */
     private boolean isCodeExists(String code, Long excludeId) {
         if (!StringUtils.hasText(code)) {

@@ -97,14 +97,15 @@ class DictManageServiceTest {
         DictTypeDTO dto = buildDictTypeDTO("update");
         dictManageService.createDictType(dto);
 
-        dto.setName("修改后的名称_" + System.currentTimeMillis());
+        String newName = "修改后的名称_" + System.currentTimeMillis();
+        dto.setName(newName);
         dto.setRemark("修改后的备注");
         boolean result = dictManageService.updateDictType(dto);
 
         assertTrue(result, "更新应返回 true");
 
         DictType updated = dictManageService.getDictTypeById(dto.getId());
-        assertEquals("修改后的名称_" + System.currentTimeMillis(), updated.getName());
+        assertEquals(newName, updated.getName());
         assertEquals("修改后的备注", updated.getRemark());
     }
 
@@ -145,7 +146,7 @@ class DictManageServiceTest {
 
         assertNotNull(result);
         assertTrue(result.getTotal() >= 2, "总记录应 >= 2");
-        assertEquals(10, result.getRecords().size(), "每页应返回 10 条");
+        assertEquals(result.getTotal(), result.getList().size(), "每页应返回全部记录（因为总数小于10）");
     }
 
     @Test
@@ -158,7 +159,7 @@ class DictManageServiceTest {
         var result = dictManageService.pageDictTypes(1, 10, uniqueName, null);
 
         assertNotNull(result);
-        assertTrue(result.getRecords().stream()
+        assertTrue(result.getList().stream()
                 .anyMatch(dt -> uniqueName.equals(dt.getName())),
                 "应能按名称过滤");
     }
@@ -208,13 +209,14 @@ class DictManageServiceTest {
         DictDataDTO ddDto = buildDictDataDTO(dtDto.getId(), "update");
         dictManageService.createDictData(ddDto);
 
-        ddDto.setLabel("修改后的标签_" + System.currentTimeMillis());
+        String newLabel = "修改后的标签_" + System.currentTimeMillis();
+        ddDto.setLabel(newLabel);
         boolean result = dictManageService.updateDictData(ddDto);
 
         assertTrue(result, "更新应返回 true");
 
         DictData updated = dictManageService.getDictDataById(ddDto.getId());
-        assertEquals("修改后的标签_" + System.currentTimeMillis(), updated.getLabel());
+        assertEquals(newLabel, updated.getLabel());
     }
 
     @Test

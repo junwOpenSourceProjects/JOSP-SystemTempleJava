@@ -75,6 +75,10 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         if (id == null) {
             throw new RuntimeException("部门ID不能为空");
         }
+        Dept existDept = getById(id);
+        if (existDept == null) {
+            throw new RuntimeException("部门不存在");
+        }
         // 检查是否有子部门
         LambdaQueryWrapper<Dept> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Dept::getParentId, id);

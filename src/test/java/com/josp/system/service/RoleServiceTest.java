@@ -83,14 +83,15 @@ class RoleServiceTest {
         RoleDTO dto = buildRoleDTO("update");
         roleService.createRole(dto);
 
-        dto.setName("修改后的角色名_" + System.currentTimeMillis());
+        String newName = "修改后的角色名_" + System.currentTimeMillis();
+        dto.setName(newName);
         dto.setRemark("修改后的备注");
         boolean result = roleService.updateRole(dto);
 
         assertTrue(result, "更新应返回 true");
 
         Role updated = roleService.getRoleById(dto.getId());
-        assertEquals("修改后的角色名_" + System.currentTimeMillis(), updated.getName());
+        assertEquals(newName, updated.getName());
     }
 
     @Test

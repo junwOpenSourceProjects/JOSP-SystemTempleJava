@@ -25,5 +25,5 @@ public interface RoleMenuMapper extends BaseMapper<RoleMenu> {
     /**
      * 批量插入角色菜单关联
      */
-    void batchInsert(@Param("roleId") Long roleId, @Param("menuIds") List<Long> menuIds);
+    void batchInsert(@Param("list") List<RoleMenu> list);
 }

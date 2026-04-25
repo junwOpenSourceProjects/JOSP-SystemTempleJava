@@ -6,7 +6,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-
+import org.mockito.Mockito;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -34,9 +34,14 @@ public class TestRedisConfig {
     // ============================================================
 
     @Bean
-    public StringRedisTemplate stringRedisTemplate() {
+    public RedisConnectionFactory redisConnectionFactory() {
+        return Mockito.mock(RedisConnectionFactory.class);
+    }
+
+    @Bean
+    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory connectionFactory) {
         StringRedisTemplate template = new StringRedisTemplate();
-        // 不设置 connectionFactory，Spring Boot 不会尝试连接真实 Redis
+        template.setConnectionFactory(connectionFactory);
         return template;
     }
 
@@ -45,8 +50,9 @@ public class TestRedisConfig {
     // ============================================================
 
     @Bean
-    public RedisTemplate<Object, Object> redisTemplate() {
+    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<Object, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new StringRedisSerializer());
         template.setHashKeySerializer(new StringRedisSerializer());

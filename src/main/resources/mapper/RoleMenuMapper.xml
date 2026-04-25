@@ -7,10 +7,10 @@
     </delete>
 
     <insert id="batchInsert">
-        INSERT INTO sys_role_menu (role_id, menu_id, create_time)
+        INSERT INTO sys_role_menu (id, role_id, menu_id, create_time)
         VALUES
-        <foreach collection="menuIds" item="menuId" separator=",">
-            (#{roleId}, #{menuId}, NOW())
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id}, #{item.roleId}, #{item.menuId}, NOW())
         </foreach>
     </insert>
 
