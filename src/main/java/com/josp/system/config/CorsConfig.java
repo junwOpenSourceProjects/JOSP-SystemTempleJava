@@ -7,19 +7,20 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 /**
- * CORS (Cross-Origin Resource Sharing) Configuration.
+ * CORS (跨域资源共享) 配置类。
  *
- * <p>Configures cross-origin HTTP requests for the JOSP System.
- * Allows the Vue3 frontend (running on a different origin) to make API requests
- * to this backend server with proper credential handling.
+ * <p>为 JOSP System 配置跨域 HTTP 请求，允许 Vue3 前端（运行在不同源）向此后端服务器发起 API 请求。
  *
- * <p>Key settings:
+ * <p>主要配置：
  * <ul>
- *   <li>Allow all origin patterns (configure specific origins in production)</li>
- *   <li>Allow credentials (cookies, authorization headers)</li>
- *   <li>Expose Authorization header so the frontend can read JWT tokens</li>
- *   <li>Cache preflight (OPTIONS) responses for 1 hour</li>
+ *   <li>允许前端 localhost:3000 开发环境访问</li>
+ *   <li>允许携带凭证（cookies, Authorization header 等）</li>
+ *   <li>暴露 Authorization header 供前端读取 JWT token</li>
+ *   <li>缓存预检（OPTIONS）响应 1 小时</li>
  * </ul>
+ *
+ * <p><strong>注意：</strong>当 {@code allowCredentials=true} 时，不能使用
+ * {@code originPatterns("*")}（CORS 规范不允许）。必须指定具体源或使用动态源检查。
  *
  * @author JOSP Team
  * @version 1.0
@@ -29,32 +30,34 @@ import org.springframework.web.filter.CorsFilter;
 public class CorsConfig {
 
     /**
-     * Creates a CorsFilter bean that intercepts all requests and applies CORS headers.
+     * 创建 CorsFilter Bean，拦截所有请求并添加 CORS 响应头。
      *
-     * @return a configured CorsFilter instance
+     * @return 配置好的 CorsFilter 实例
      */
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // Allow all origins (use specific patterns in production, e.g. "https://yourdomain.com")
-        config.addAllowedOriginPattern("*");
+        // 允许前端开发环境 localhost:3000 访问（Vue3 默认端口）
+        // 生产环境应替换为实际域名，如 "https://yourdomain.com"
+        config.addAllowedOriginPattern("http://localhost:3000");
+        config.addAllowedOriginPattern("http://127.0.0.1:3000");
 
-        // Allow credentials (cookies, Authorization header, etc.)
+        // 允许携带凭证（cookies、Authorization header 等）
+        // 注意：设置了此选项后，origin 不能使用 "*"
         config.setAllowCredentials(true);
 
-        // Allow all request headers
+        // 允许所有请求头
         config.addAllowedHeader("*");
 
-        // Allow all HTTP methods
+        // 允许所有 HTTP 方法
         config.addAllowedMethod("*");
 
-        // Expose Authorization header to the client so it can read the JWT from response
+        // 暴露 Authorization header，方便前端从响应中读取 JWT token
         config.addExposedHeader("Authorization");
         config.addExposedHeader("Content-Disposition");
 
-        // Cache preflight (OPTIONS) response for 3600 seconds (1 hour)
-        // Reduces OPTIONS preflight requests for the same URL
+        // 缓存预检（OPTIONS）响应 3600 秒（1 小时），减少重复预检请求
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

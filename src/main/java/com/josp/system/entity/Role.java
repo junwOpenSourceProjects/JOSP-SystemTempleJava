@@ -8,11 +8,11 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * System Role Entity.
+ * 系统角色实体。
  *
- * <p>Represents a security role in the JOSP RBAC system.
- * Users are assigned roles via the {@code account_role} join table,
- * and each role is granted menu permissions via {@code sys_role_menu}.
+ * <p>表示 JOSP RBAC 系统中的安全角色。
+ * 用户通过 {@code account_role} 关联表分配角色，
+ * 每个角色通过 {@code sys_role_menu} 授予菜单权限。
  *
  * @author JOSP Team
  * @version 1.0
@@ -21,28 +21,45 @@ import java.time.LocalDateTime;
 @Data
 @TableName("sys_role")
 public class Role {
-    /** Primary key, auto-assigned snowflake ID */
+
+    /**
+     * 主键，使用自动分配的雪花ID
+     */
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
-    /** Display name of the role (e.g. "System Administrator") */
+    /**
+     * 角色显示名称（例如："系统管理员"）
+     */
     private String name;
 
-    /** Unique role code used in permission checks (e.g. "ROLE_ADMIN") */
+    /**
+     * 角色唯一编码，用于权限校验（例如："ROLE_ADMIN"）
+     */
     private String code;
 
-    /** Display order, smaller values appear first in dropdown lists */
+    /**
+     * 显示顺序，下拉列表中值越小越靠前
+     */
     private Integer sort;
 
-    /** Active status: 1 = enabled, 0 = disabled */
+    /**
+     * 启用状态：1 = 启用，0 = 禁用
+     */
     private Integer status;
 
-    /** Optional description of the role's purpose */
+    /**
+     * 角色用途的可选描述
+     */
     private String remark;
 
-    /** Record creation timestamp */
+    /**
+     * 记录创建时间
+     */
     private LocalDateTime createTime;
 
-    /** Record last-update timestamp */
+    /**
+     * 记录最后更新时间
+     */
     private LocalDateTime updateTime;
 }

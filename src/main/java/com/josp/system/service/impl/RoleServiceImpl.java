@@ -36,6 +36,11 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     private final RoleMenuMapper roleMenuMapper;
     private final AccountRoleMapper accountRoleMapper;
 
+    /**
+     * 查询所有角色，按排序升序和创建时间降序排列。
+     *
+     * @return 角色列表
+     */
     @Override
     public List<Role> listAllRoles() {
         LambdaQueryWrapper<Role> wrapper = new LambdaQueryWrapper<>();
@@ -43,11 +48,25 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         return list(wrapper);
     }
 
+    /**
+     * 根据ID查询角色详情。
+     *
+     * @param id 角色ID
+     * @return 角色实体
+     */
     @Override
     public Role getRoleById(Long id) {
         return getById(id);
     }
 
+    /**
+     * 创建新角色。
+     *
+     * <p>创建前检查角色编码唯一性，创建后根据 menuIds 分配菜单权限。
+     *
+     * @param roleDTO 角色数据传输对象
+     * @return 是否创建成功
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean createRole(RoleDTO roleDTO) {
@@ -84,6 +103,14 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         return result;
     }
 
+    /**
+     * 更新角色信息。
+     *
+     * <p>更新前检查角色编码唯一性（排除自身），更新后重新分配菜单权限。
+     *
+     * @param roleDTO 角色数据传输对象
+     * @return 是否更新成功
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean updateRole(RoleDTO roleDTO) {
@@ -127,6 +154,15 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         return result;
     }
 
+    /**
+     * 删除角色。
+     *
+     * <p>删除前检查是否已分配给用户，如已分配则拒绝删除。
+     * 删除时会同时清理该角色的菜单关联。
+     *
+     * @param id 角色ID
+     * @return 是否删除成功
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteRole(Long id) {
@@ -152,12 +188,27 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         return removeById(id);
     }
 
+    /**
+     * 根据角色ID查询已分配的菜单ID列表。
+     *
+     * @param roleId 角色ID
+     * @return 菜单ID列表
+     */
     @Override
     public List<Long> getMenuIdsByRoleId(Long roleId) {
         List<Long> menuIds = roleMenuMapper.selectMenuIdsByRoleId(roleId);
         return menuIds != null ? menuIds : new ArrayList<>();
     }
 
+    /**
+     * 为角色分配菜单权限。
+     *
+     * <p>会先删除角色原有的菜单权限，再插入新的菜单权限。
+     *
+     * @param roleId  角色ID
+     * @param menuIds 菜单ID列表
+     * @return 是否分配成功
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean assignMenus(Long roleId, List<Long> menuIds) {
@@ -184,11 +235,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     }
 
     /**
-     * 检查角色编码是否已存在，可选择排除指定的角色 ID
-     * （用于允许将角色更新为其自身的编码而不触发重复错误）。
+     * 检查角色编码是否已存在。
+     *
+     * <p>可用于允许将角色更新为其自身的编码而不触发重复错误。
      *
      * @param code      要检查的角色编码
-     * @param excludeId 要忽略的角色 ID（传入 null 以检查所有记录）
+     * @param excludeId 要忽略的角色ID（传入 null 以检查所有记录）
      * @return 如果编码已在其他角色中存在则返回 true
      */
     private boolean isCodeExists(String code, Long excludeId) {

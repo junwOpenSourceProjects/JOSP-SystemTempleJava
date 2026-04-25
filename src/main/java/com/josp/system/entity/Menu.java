@@ -9,17 +9,17 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * System Menu / Permission Entity.
+ * 系统菜单/权限实体。
  *
- * <p>Models both Vue Router routes (type=1/2) and SPA component-permissions (type=3).
- * Menu records form a tree via parentId self-reference.
- * Role-to-menu many-to-many mapping is stored in {@code sys_role_menu}.
+ * <p>同时建模 Vue Router 路由（type=1/2）和 SPA 组件权限（type=3）。
+ * Menu 记录通过 parentId 自引用形成树形结构。
+ * 角色到菜单的多对多映射存储在 {@code sys_role_menu} 表中。
  *
- * <p>Type values (MenuType):
+ * <p>Type 类型值：
  * <ul>
- *   <li>1 = Directory (parent node, no component)</li>
- *   <li>2 = Menu (actual route with component)</li>
- *   <li>3 = Button/Operation permission (invisible in sidebar, used for perms check)</li>
+ *   <li>1 = 目录（父节点，无组件）</li>
+ *   <li>2 = 菜单（带组件的实际路由）</li>
+ *   <li>3 = 按钮/操作权限（侧边栏不显示，用于权限校验）</li>
  * </ul>
  *
  * @author JOSP Team
@@ -30,74 +30,88 @@ import java.time.LocalDateTime;
 @TableName("sys_menu")
 public class Menu implements Serializable {
 
-    /** Primary key, snowflake ID */
+    /**
+     * 主键，使用雪花ID
+     */
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
-     * Parent menu ID.
-     * 0 = root node (top-level directory or standalone route).
+     * 父菜单ID。
+     * 0 = 根节点（顶级目录或独立路由）。
      */
     private Long parentId;
 
-    /** Display title shown in the sidebar */
+    /**
+     * 侧边栏显示的标题
+     */
     private String name;
 
     /**
-     * Menu type: 1=Directory, 2=Menu, 3=Button/Operation.
-     * Type 3 items are not rendered in the sidebar but grant perms to roles.
+     * 菜单类型：1=目录，2=菜单，3=按钮/操作。
+     * 类型3的项不在侧边栏渲染，但会授予角色权限。
      */
     private Integer type;
 
     /**
-     * Vue Router path segment.
-     * Absolute paths start with "/" and are appended to the base path;
-     * relative paths are appended to the parent's path.
+     * Vue Router 路径段。
+     * 绝对路径以"/"开头，拼接在基础路径之后；
+     * 相对路径拼接在父路径之后。
      */
     private String path;
 
     /**
-     * Vue component file path (e.g. "system/user/index").
-     * null for type=1 directories; type=3 buttons also leave this null.
+     * Vue 组件文件路径（例如："system/user/index"）。
+     * type=1 目录为 null；type=3 按钮也为 null。
      */
     private String component;
 
-    /** Element Plus icon name shown in the sidebar (e.g. "user", "setting") */
+    /**
+     * Element Plus 图标名称（例如："user", "setting"）
+     */
     private String icon;
 
-    /** Sort order among siblings; lower values appear first */
+    /**
+     * 兄弟节点间的排序顺序；值越小越靠前
+     */
     private Integer sort;
 
     /**
-     * Visibility flag: 1 = visible in sidebar, 0 = hidden.
-     * Hidden menus (type=2) are still accessible via direct URL.
+     * 可见性标志：1 = 在侧边栏显示，0 = 隐藏。
+     * 隐藏的菜单（type=2）仍可通过直接 URL 访问。
      */
     private Integer visible;
 
     /**
-     * Redirect target for type=1 directories when user navigates to the parent path.
-     * Absent or empty for non-directory menus.
+     * type=1 目录时：用户导航到父路径时的重定向目标。
+     * 非目录菜单此字段为空或不存在。
      */
     private String redirect;
 
     /**
-     * Permission string for type=3 buttons (e.g. "sys:user:add").
-     * Checked via {@code @PreAuthorize("hasAuthority('...')")} in back-end.
+     * type=3 按钮的权限字符串（例如："sys:user:add"）。
+     * 后端通过 {@code @PreAuthorize("hasAuthority('...')"} 校验。
      */
     private String perm;
 
     /**
-     * Whether this route's component should be kept alive via {@code <keep-alive>}.
-     * 1 = keep alive, 0 = do not keep alive.
+     * 该路由的组件是否应通过 {@code <keep-alive>} 保持存活。
+     * 1 = 保持存活，0 = 不保持存活。
      */
     private Integer keepAlive;
 
     /**
-     * For type=1 directories: whether to always show the wrapper div even if only
-     * one child is present (to avoid redirect loop in some layouts). 1=yes, 0=no.
+     * type=1 目录：即使只有一个子节点是否也始终显示外层包装 div（避免某些布局中的重定向循环）。1=是，0=否。
      */
     private Integer alwaysShow;
 
+    /**
+     * 记录创建时间
+     */
     private LocalDateTime createTime;
+
+    /**
+     * 记录最后更新时间
+     */
     private LocalDateTime updateTime;
 }
