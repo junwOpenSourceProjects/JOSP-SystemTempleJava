@@ -75,8 +75,6 @@ public class SecurityConfig {
                     "/api/v1/auth/login",
                     "/api/v1/auth/register",
                     "/api/v1/auth/captcha",
-                    "/api/login",
-                    "/api/register",
                     "/api/v1/demo/**",
                     "/api/v1/dashboard/**",
                     "/api/v1/dict/**",

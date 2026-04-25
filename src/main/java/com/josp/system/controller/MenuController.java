@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.josp.system.common.api.Result;
 import com.josp.system.common.api.RouteVO;
 import com.josp.system.dto.MenuDTO;
+import com.josp.system.entity.LoginUser;
 import com.josp.system.entity.Menu;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import com.josp.system.service.MenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -42,7 +45,16 @@ public class MenuController {
      */
     @Operation(summary = "Get user routes")
     @GetMapping("/routes")
-    public Result<List<RouteVO>> getRoutes(@RequestParam Long userId) {
+    public Result<List<RouteVO>> getRoutes(@RequestParam(required = false) Long userId) {
+        if (userId == null) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.getPrincipal() instanceof LoginUser loginUser) {
+                userId = loginUser.getId();
+            }
+        }
+        if (userId == null) {
+            return Result.failed("Unable to determine userId");
+        }
         List<RouteVO> routes = menuService.listRoutesByUserId(userId);
         return Result.success(routes);
     }

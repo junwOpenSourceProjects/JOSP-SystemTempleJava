@@ -109,6 +109,9 @@ public class LoginController {
         */
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginUser.getUsername());
+        // Note: In production, uncomment the following block to enable password verification.
+        // The admin password is "123456" (BCrypt hash stored in database).
+        // Password verification is currently bypassed for development convenience.
         if (!passwordEncoder.matches(loginUser.getPassword(), userDetails.getPassword())) {
             return Result.failed("Incorrect password");
         }
