@@ -26,7 +26,7 @@ spring:
   security:
     user:
       name: admin
-      password: password
+      password: ${SPRING_SECURITY_PASSWORD:}
   main:
     lazy-initialization: true   # 延迟Bean初始化，显著降低启动峰值内存
 
@@ -38,7 +38,7 @@ mybatis-plus:
 
 jwt:
   tokenHeader: Authorization
-  secret: josp-system-template-secret-key-2026-very-long-and-secure
+  secret: ${JWT_SECRET:***SECRET***}
   expiration: 604800 # 7 days
   tokenHead: "Bearer "
 
