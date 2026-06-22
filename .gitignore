@@ -72,6 +72,7 @@ replay_pid*
 application-local.yml
 application-dev.yml
 *.local
+.env
 
 # Compiled class files
 *.class
